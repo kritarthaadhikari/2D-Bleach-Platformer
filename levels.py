@@ -30,9 +30,10 @@ def sideScrolling(player):
     global scroll
     if st.scroll:
         for i in range(0,3):
-            st.win.blit(st.bg,(i*st.screen_width - scroll,0))  # Note: -scroll to move left
+            st.win.blit(st.bg,(i*st.screen_width - scroll,0))
+            st.win.blit(st.arrow,(1100-scroll,450))
         scroll += 5  # Move camera right
-        if scroll > st.screen_width:
+        if scroll >= st.screen_width:
             scroll = 0
             st.scroll= False
             levelComplete= False

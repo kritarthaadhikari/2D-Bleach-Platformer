@@ -19,18 +19,18 @@ def hudPannel():
     st.win.blit(st.hud_pannel, (10,10))
 
 def redrawwindow():
-    if not (lv.levelComplete and st.scroll):
+    if not (lv.levelComplete or  st.scroll):
         st.win.blit(st.bg, (0, 0))
-    hudPannel()
     for e in en.hollows:
         e.move(st.win,player, lv.scroll if lv.levelComplete and st.scroll else 0)
     if lv.levelComplete:
         st.win.blit(st.arrow,(1100-lv.scroll,450))
-        if not player.standing and player.facing==1:
+        if player.action != "idle" and player.facing==1:
             st.scroll=True
             lv.sideScrolling(player)
         else:
             st.scroll=False
+    hudPannel()
     player.draw(st.win, lv.scroll if lv.levelComplete and st.scroll else 0)
     text= st.font.render(f"Score: {st.score}",1,(255,255,255))
     st.win.blit(text,(st.screen_width-text.get_width()-20, 0))
@@ -65,7 +65,7 @@ def createEnemies():
             enemy = en.Enemy(110, 149, 1200, 500)
             en.hollows.append(enemy)
             lv.hollows.append(enemy)
-        if (time.time() - last_enemy_spawn >= lv.levels[lv.i]["spawn_delay"] )and not len(lv.hollows)==lv.hollow:
+        if (time.time() - last_enemy_spawn >= lv.levels[lv.i]["spawn_delay"]) and not len(lv.hollows)==lv.hollow:
             enemy = en.Enemy(110, 149, random.randint(0,1)*st.screen_width+random.choice([-1,1]*100), 500)
             enemy.facing=-1 if enemy.x==st.screen_width else 1
             lv.hollows.append(enemy)
@@ -118,7 +118,7 @@ def enemyDamaged(enemy):
     if player.attackCount==0:
         if player.facing==enemy.facing:
             enemy.facing*=-1
-        enemy.attacking= True
+        enemy.state="attacking"
         enemy.gothit(player)
         if player.combo:
             enemy.health-=40*player.incrementalFactor
@@ -126,8 +126,8 @@ def enemyDamaged(enemy):
 def main():
     run = True
     st.game_state="mainmenu"
+    restart, mainmenu = None, None
     while run:
-        print(player.x)
         clock.tick(22)
         events= pygame.event.get()
         for event in events:
@@ -142,9 +142,9 @@ def main():
                 player.staminaGauge+=1/3*player.incrementalFactor
             for event in events:
                 if event.type ==pygame.MOUSEBUTTONDOWN and st.pause:
-                    if restart.collidepoint(event.pos):
+                    if restart and restart.collidepoint(event.pos):
                         reset()
-                    elif mainmenu.collidepoint(event.pos):
+                    elif mainmenu and mainmenu.collidepoint(event.pos):
                         st.game_state="mainmenu"
                         reset()
                 if event.type == pygame.KEYDOWN:
@@ -156,20 +156,18 @@ def main():
                             st.pause_music()
                         if not event.key==pygame.K_b:
                             if event.key== pygame.K_SPACE:
-                                if not player.attacking and not player.combo:
-                                    player.standing= False
-                                    player.attacking= True
+                                if player.action not in ["attacking", "combo"]:
+                                    player.action="attacking"
                                     player.signature=False
                                     player.stancephase=0
                                     player.attackCount=0
-                                    player.combo = False
                                     player.comboIndex = 0
                                     player.comboTimer = 5
-                                elif player.attacking and not player.combo:
-                                    player.combo= True
+                                elif player.action=="attacking":
+                                    player.action="combo"
                                     player.comboIndex=1
                                     player.comboTimer=5
-                                elif player.combo:
+                                elif player.action=="combo":
                                     player.comboIndex+=1
                                     player.comboTimer=5
                             
@@ -177,17 +175,15 @@ def main():
                                 if player.vel < player.x < st.screen_width - player.width - player.vel and player.staminaGauge>=20:
                                     player.interrupt()
                                     player.x+= player.facing*40*player.incrementalFactor
-                                    player.standing= False
-                                    player.dashing= True
+                                    player.action="dashing"
                                     player.dashCount=0
                                     player.staminaGauge-=20
                                     
                             elif event.key== pygame.K_z:
                                 if st.killCount!=0 and player.staminaGauge>=90:
                                     player.interrupt()
-                                    player.standing= False
+                                    player.action="signature"
                                     player.signature= True
-                                    player.attacking= True
                                     player.signatureCount=0
                                     player.staminaGauge-=80
                                     new_slash= pj.Projectile(player.x, player.feet_y-10,64,64,player.facing)   
@@ -212,30 +208,27 @@ def main():
             keys = pygame.key.get_pressed()
             if not st.pause:
                 if not player.bankai:
-                    if not player.attacking and not player.combo:
+                    if player.action not in ["attacking", "combo"]:
                         if (keys[pygame.K_LEFT] or keys[pygame.K_a]) and player.x > player.vel:
                             player.x -= player.vel
                             player.left = True
                             player.right = False
-                            player.standing = False
                             player.facing= -1
                         elif (keys[pygame.K_RIGHT] or keys[pygame.K_d]) and (player.x+ player.width+ player.vel < st.screen_width or (lv.levelComplete and st.scroll)):
                             player.x += player.vel
                             player.left = False
                             player.right = True
-                            player.standing = False
                             player.facing= 1
                         else:
-                            if not player.dashing:      
-                                player.standing = True
+                            if player.action != "dashing":      
+                                player.action="idle"
                                 player.dashCount=0
                             player.walkCount = 0
 
                     # Jump logic
-                    if not player.isJump:
+                    if player.action != "jump":
                         if keys[pygame.K_UP] or keys[pygame.K_w] :
-                            player.isJump = True
-                            player.standing = False
+                            player.action="jump"
                     else:
                         if player.jumpCount >= -11:
                             neg = 1
@@ -245,7 +238,7 @@ def main():
                             player.jumpCount -= 1
                         else:
                             player.jumpCount = 11
-                            player.isJump = False
+                            player.action="idle"
                             player.feet_y=500
 
                 # Collisions
@@ -256,28 +249,31 @@ def main():
                                 h.health-=player.damage
                                 p.hitEnemies.append(h)
                                 h.facing=-1*player.facing
-                                h.blown=True
+                                h.state="blown"
                 
                 for h in en.hollows[:]:
                     if player.hitbox.colliderect(h.body_hitbox):
                         player.hollowattack.append(h)
-                        h.attacking=True
+                        if h.state=="idle":
+                            h.state="attacking"
                         if player.hitbox.colliderect(h.attack_hitbox):
                             if 21 <=h.attackCount <24:
                                 player.hit()
-                                if not player.down:
-                                    h.hit= True  
-                            if player.attackCount==0 and (player.attacking or player.combo and not player.signature):
+                                if player.action != "knockeddown":
+                                    if h.state=="attacking":
+                                        h.state="hit"  
+                            if player.attackCount==0 and (player.action in ["attacking", "combo"] and player.signature==False):
                                 enemyDamaged(h)
-                        elif not player.signature and (player.attacking or player.combo):
+                        elif player.signature==False and (player.action in ["attacking", "combo"]):
                             enemyDamaged(h)
                         else:
-                            h.hit= False
+                            if h.state!="falling" and h.state!="dead":
+                                h.state="idle"
                             player.stationaryPhase= False
-                            player.gotHit=False
                     else:
                         if h in player.hollowattack:
-                            h.hit= False
+                            if h.state!="falling" and h.state!="dead":
+                                h.state="idle"
                             player.stationaryPhase= False
                             player.gotHit= False
                 if player.health<=0:
