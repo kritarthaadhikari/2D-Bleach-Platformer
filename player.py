@@ -12,23 +12,24 @@ class Player:
         self.walkCount = 0 #movement
         self.stanceCount = 0 #stance init
         self.stanceFinal = 0 #stance continuation
-        self.stancephase = 0 #T/F for stance
+        self.stance_state = "initial" # stance animation phase
         self.jumpCount = 11 #jump parameter
         self.spjumpCount = 0 #jump 
         self.facing = 1 #direction
         self.dashTimer = 10 #dash duration
         self.hitbox = pygame.Rect(self.x+10, self.feet_y-4,50, 52 )
         self.getHitCount = 0 #getting hit
-        self.stationaryPhase = False #getting hit continuation T/F
+        self.hit_state = "normal" # normal, got_hit, stationary
         self.stationaryPhaseCount = 0 #getting hit continuation
         self.downCount = 0 #knocked out 
+        self.down_state = "normal" # normal or down
         self.health = 120
         self.signatureCount = 0
         self.staminaGauge = 100
         self.ultimateGauge = 160
         self.comboIndex=0 #for combo attacks
         self.comboTimer=5 #Time allowed for followup attack
-        self.comboQueued= False
+        self.combo_state= "none"
         self.mode= "shikai" #shikai or bankai mode
         self.action="idle" #current action state
         self.incrementalFactor= 1 #bankai impact increase factor
@@ -86,12 +87,11 @@ class Player:
                 "transformLeft": st.bankaiTransformLeft 
             }
         }
-        self.bankai=False
+        self.transform_state="inactive"
         self.bankaiCount=0
         self.attackCount = 0 #attack
         self.dashCount = 0 #dash
-        self.right = False
-        self.left = False
+        self.movement_state = "idle"
         self.hollowattack=[]
         self.damage=200
 
@@ -107,7 +107,7 @@ class Player:
         self.signatureCount=0
         self.jumpCount=11
         self.spjumpCount=0
-        self.bankai=True
+        self.transform_state="activating"
         self.ultimateGauge=0
         self.staminaGauge/=2
         st.bankaiSound.play(0)
@@ -117,7 +117,7 @@ class Player:
         framesPerImg = 3
         limit=0
         sprite = st.jumpLeft[0]
-        if self.bankai:
+        if self.transform_state == "activating":
             limit=len(self.animations[self.mode]["transformRight"])*4
             if self.facing==1:
                 sprite= self.animations[self.mode]["transformRight"][self.bankaiCount//4]
@@ -135,11 +135,11 @@ class Player:
             
             if self.bankaiCount+1>= limit:
                 self.bankaiCount=0
-                self.bankai=False
+                self.transform_state="inactive"
             self.bankaiCount+=1
-        if not self.bankai:
+        if self.transform_state != "activating":
             if self.action=="idle" and self.action != "jump" and self.action not in ["attacking", "combo", "signature"]:
-                self.stancephase=0
+                self.stance_state="initial"
                 if self.action=="dashing": #dashing animation
                     if self.facing==1:
                         limit= len(self.animations[self.mode]["dashRight"])*framesPerImg
@@ -157,17 +157,17 @@ class Player:
                         self.dashTimer=10
 
                 elif self.action != "knockeddown": #movement animation
-                    if self.left:
+                    if self.movement_state == "left":
                         limit = len(self.animations[self.mode]["walkLeft"]) * framesPerImg
                         sprite = self.animations[self.mode]["walkLeft"][self.walkCount // framesPerImg]
-                    elif self.right:
+                    elif self.movement_state == "right":
                         limit = len(self.animations[self.mode]["walkRight"]) * framesPerImg
                         sprite = self.animations[self.mode]["walkRight"][self.walkCount // framesPerImg]
                     self.walkCount += 1
                     if self.walkCount +1 >= limit:
                         self.walkCount = 0
                 else: #Standing back up animation
-                    self.stationaryPhase= False
+                    self.hit_state= "normal"
                     if self.facing==1:
                         limit= len(self.animations[self.mode]["standUpRight"])* framesPerImg
                         sprite= self.animations[self.mode]["standUpRight"][self.downCount// framesPerImg]
@@ -176,9 +176,9 @@ class Player:
                         sprite= self.animations[self.mode]["standUpLeft"][self.downCount// framesPerImg]
                     if self.downCount+1 >=limit:
                         self.downCount=0
-                        self.down= False
-                        if not self.gotHit:
-                            self.stationaryPhase=False
+                        self.down_state= "normal"
+                        if self.hit_state != "got_hit":
+                            self.hit_state = "normal"
                         
                     self.downCount+=1
             elif self.action=="jump": #jump animation
@@ -191,7 +191,7 @@ class Player:
                 if self.spjumpCount +1>= limit:
                     self.spjumpCount=0
                 self.spjumpCount += 1
-            elif self.stationaryPhase:  #continuously getting hit animation
+            elif self.hit_state=="stationary":  #continuously getting hit animation
                 if self.facing==-1:
                     limit= len(self.animations[self.mode]["IdleHitLeft"])*framesPerImg
                     sprite= self.animations[self.mode]["IdleHitLeft"][self.stationaryPhaseCount// framesPerImg]
@@ -200,10 +200,10 @@ class Player:
                     sprite= self.animations[self.mode]["IdleHitRight"][self.stationaryPhaseCount// framesPerImg]
                 if self.stationaryPhaseCount+1>= limit:
                     self.stationaryPhaseCount=0
-                    self.down= True
+                    self.down_state= "down"
                 self.stationaryPhaseCount+=1
                 
-            elif self.gotHit: #falling and getting hit animation
+            elif self.hit_state=="got_hit": #falling and getting hit animation
                 if self.facing==1:
                     limit= len(self.animations[self.mode]["HitRight"])*framesPerImg
                     sprite= self.animations[self.mode]["HitRight"][self.getHitCount//framesPerImg]
@@ -212,9 +212,8 @@ class Player:
                     sprite= self.animations[self.mode]["HitLeft"][self.getHitCount//framesPerImg]
                 if self.getHitCount+1>=limit:
                     self.getHitCount=0
-                    self.gotHit= False
-                    self.stationaryPhase= True
-                    self.down= True
+                    self.hit_state= "stationary"
+                    self.down_state= "down"
                     self.stationaryPhaseCount=0
                 self.getHitCount+=1
             elif self.action=="attacking" or self.action=="signature":
@@ -243,8 +242,8 @@ class Player:
                     if self.attackCount+1 >= limit:
                         self.attackCount=0
                         self.action="idle"
-                        if self.comboQueued:
-                            self.comboQueued = False
+                        if self.combo_state == "queued":
+                            self.combo_state = "none"
                             self.action="combo"
                             self.attackCount = 0
 
@@ -293,7 +292,7 @@ class Player:
         draw_x= self.x
         if not self.mode=="bankai" or  ((self.animations['bankai']['stanceRight'][0] and self.facing==1)and (self.action not in ["attacking", "combo"])
                                         or((self.mode=="bankai" and (self.action in ["attacking", "combo"]) and self.facing==-1))):
-            if self.signature and self.facing==-1 or self.mode=="bankai":
+            if self and self.facing==-1 or self.mode=="bankai":
                 draw_x= self.x -sprite.get_width()+50
         
         sprite_height = sprite.get_height()
@@ -302,18 +301,17 @@ class Player:
 
     def hit(self):
         self.health-=1
-        if not self.stationaryPhase:
+        if self.hit_state != "stationary":
             self.interrupt()
-            self.gotHit=True
-            self.stationaryPhase= False
+            self.hit_state = "got_hit"
 
     def interrupt(self):
         self.action="idle"
         self.attackCount = 0
-        self.comboQueued=False
+        self.combo_state="none"
         self.comboTimer=5
         self.comboIndex=0
         self.y_offset = 0
         pr.projectiles.clear()   # only reset animation, not physics
-        self.signature= False
+        self.signature_state= "inactive"
         self.signatureCount=0

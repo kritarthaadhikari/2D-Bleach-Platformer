@@ -158,8 +158,8 @@ def main():
                             if event.key== pygame.K_SPACE:
                                 if player.action not in ["attacking", "combo"]:
                                     player.action="attacking"
-                                    player.signature=False
-                                    player.stancephase=0
+                                    player.signature_state="inactive"
+                                    player.stance_state="initial"
                                     player.attackCount=0
                                     player.comboIndex = 0
                                     player.comboTimer = 5
@@ -183,7 +183,7 @@ def main():
                                 if st.killCount!=0 and player.staminaGauge>=90:
                                     player.interrupt()
                                     player.action="signature"
-                                    player.signature= True
+                                    player.signature_state= "active"
                                     player.signatureCount=0
                                     player.staminaGauge-=80
                                     new_slash= pj.Projectile(player.x, player.feet_y-10,64,64,player.facing)   
@@ -207,22 +207,21 @@ def main():
 
             keys = pygame.key.get_pressed()
             if not st.pause:
-                if not player.bankai:
+                if player.transform_state != "activating":
                     if player.action not in ["attacking", "combo"]:
                         if (keys[pygame.K_LEFT] or keys[pygame.K_a]) and player.x > player.vel:
                             player.x -= player.vel
-                            player.left = True
-                            player.right = False
+                            player.movement_state = "left"
                             player.facing= -1
                         elif (keys[pygame.K_RIGHT] or keys[pygame.K_d]) and (player.x+ player.width+ player.vel < st.screen_width or (lv.levelComplete and st.scroll)):
                             player.x += player.vel
-                            player.left = False
-                            player.right = True
+                            player.movement_state = "right"
                             player.facing= 1
                         else:
                             if player.action != "dashing":      
                                 player.action="idle"
                                 player.dashCount=0
+                            player.movement_state = "idle"
                             player.walkCount = 0
 
                     # Jump logic
@@ -262,20 +261,19 @@ def main():
                                 if player.action != "knockeddown":
                                     if h.state=="attacking":
                                         h.state="hit"  
-                            if player.attackCount==0 and (player.action in ["attacking", "combo"] and player.signature==False):
+                            if player.attackCount==0 and (player.action in ["attacking", "combo"] and player.signature_state != "active"):
                                 enemyDamaged(h)
-                        elif player.signature==False and (player.action in ["attacking", "combo"]):
+                        elif player.signature_state != "active" and (player.action in ["attacking", "combo"]):
                             enemyDamaged(h)
                         else:
                             if h.state!="falling" and h.state!="dead":
                                 h.state="idle"
-                            player.stationaryPhase= False
+                            player.hit_state= "normal"
                     else:
                         if h in player.hollowattack:
                             if h.state!="falling" and h.state!="dead":
                                 h.state="idle"
-                            player.stationaryPhase= False
-                            player.gotHit= False
+                            player.hit_state= "normal"
                 if player.health<=0:
                     st.game_state="gameover"
                 redrawwindow()
@@ -283,7 +281,7 @@ def main():
             text=st.font.render("Game Over! Try again",1,(255,255,255))
             st.win.blit(text,(st.screen_width//2-150, st.screen_height//2-50))
             pygame.display.update()
-            time.sleep(2)
+            time.sleep(1)
             reset()
             st.game_state="start"
             pygame.display.update()
