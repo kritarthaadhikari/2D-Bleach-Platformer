@@ -25,7 +25,7 @@ def redrawwindow():
         e.move(st.win,player, lv.scroll if lv.levelComplete and st.scroll else 0)
     if lv.levelComplete:
         st.win.blit(st.arrow,(1100-lv.scroll,450))
-        if player.action != "idle" and player.facing==1:
+        if player.action not in ["idle", "jump"] and player.facing==1:
             st.scroll=True
             lv.sideScrolling(player)
         else:
@@ -120,7 +120,7 @@ def enemyDamaged(enemy):
             enemy.facing*=-1
         enemy.state="attacking"
         enemy.gothit(player)
-        if player.combo:
+        if player.action=="combo":
             enemy.health-=40*player.incrementalFactor
 
 def main():
@@ -158,7 +158,6 @@ def main():
                             if event.key== pygame.K_SPACE:
                                 if player.action not in ["attacking", "combo"]:
                                     player.action="attacking"
-                                    player.signature_state="inactive"
                                     player.stance_state="initial"
                                     player.attackCount=0
                                     player.comboIndex = 0
@@ -183,7 +182,6 @@ def main():
                                 if st.killCount!=0 and player.staminaGauge>=90:
                                     player.interrupt()
                                     player.action="signature"
-                                    player.signature_state= "active"
                                     player.signatureCount=0
                                     player.staminaGauge-=80
                                     new_slash= pj.Projectile(player.x, player.feet_y-10,64,64,player.facing)   
@@ -194,7 +192,6 @@ def main():
                                     st.show_text= True
                                     st.text_start_time= pygame.time.get_ticks()
                                     redrawwindow()
-                                    pygame.display.update()
                         elif event.key==pygame.K_b and player.ultimateGauge>=160:
                             player.activateBankai()
 
@@ -218,7 +215,7 @@ def main():
                             player.movement_state = "right"
                             player.facing= 1
                         else:
-                            if player.action != "dashing":      
+                            if player.action not in ["dashing", "jump"]:      
                                 player.action="idle"
                                 player.dashCount=0
                             player.movement_state = "idle"
@@ -261,9 +258,9 @@ def main():
                                 if player.action != "knockeddown":
                                     if h.state=="attacking":
                                         h.state="hit"  
-                            if player.attackCount==0 and (player.action in ["attacking", "combo"] and player.signature_state != "active"):
+                            if player.attackCount==0 and (player.action in ["attacking", "combo"]):
                                 enemyDamaged(h)
-                        elif player.signature_state != "active" and (player.action in ["attacking", "combo"]):
+                        elif(player.action in ["attacking", "combo"]):
                             enemyDamaged(h)
                         else:
                             if h.state!="falling" and h.state!="dead":
@@ -271,7 +268,7 @@ def main():
                             player.hit_state= "normal"
                     else:
                         if h in player.hollowattack:
-                            if h.state!="falling" and h.state!="dead":
+                            if h.state not in ["falling", "dead"]:
                                 h.state="idle"
                             player.hit_state= "normal"
                 if player.health<=0:

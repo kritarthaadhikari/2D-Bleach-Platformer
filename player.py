@@ -29,10 +29,17 @@ class Player:
         self.ultimateGauge = 160
         self.comboIndex=0 #for combo attacks
         self.comboTimer=5 #Time allowed for followup attack
-        self.combo_state= "none"
+        self.combo_state= "none" 
         self.mode= "shikai" #shikai or bankai mode
         self.action="idle" #current action state
         self.incrementalFactor= 1 #bankai impact increase factor
+        self.transform_state="inactive" #inactive, activating
+        self.bankaiCount=0
+        self.attackCount = 0 #attack
+        self.dashCount = 0 #dash
+        self.movement_state = "idle" #left, right, or idle
+        self.hollowattack=[] 
+        self.damage=200
         self.animations= {
             "shikai":{
                 "walkRight": st.walkRight,
@@ -87,13 +94,6 @@ class Player:
                 "transformLeft": st.bankaiTransformLeft 
             }
         }
-        self.transform_state="inactive"
-        self.bankaiCount=0
-        self.attackCount = 0 #attack
-        self.dashCount = 0 #dash
-        self.movement_state = "idle"
-        self.hollowattack=[]
-        self.damage=200
 
     def activateBankai(self):
         self.mode= "bankai"
@@ -137,9 +137,33 @@ class Player:
                 self.bankaiCount=0
                 self.transform_state="inactive"
             self.bankaiCount+=1
+
         if self.transform_state != "activating":
-            if self.action=="idle" and self.action != "jump" and self.action not in ["attacking", "combo", "signature"]:
+            if self.action=="idle" or self.action=="dashing" or self.action=="knockeddown": #idle and dash animation
                 self.stance_state="initial"
+                if self.stance_state=="initial": #stance during no input
+                    if self.facing==-1:
+                        limit = len(self.animations[self.mode]["stanceLeft"]) * framesPerImg
+                        sprite = self.animations[self.mode]["stanceLeft"][self.stanceCount // framesPerImg]
+                    elif self.facing==1:
+                        limit = len(self.animations[self.mode]["stanceRight"]) * framesPerImg
+                        sprite = self.animations[self.mode]["stanceRight"][self.stanceCount // framesPerImg]
+                    if self.stanceCount +1>= limit:
+                        self.stanceCount=0
+                        self.stance_state="final"
+                    self.stanceCount += 1
+                elif self.stance_state=="final": #continued stance when idle
+                    if self.facing==-1:
+                        limit = len(self.animations[self.mode]["stanceFinalLeft"]) * framesPerImg
+                        sprite = self.animations[self.mode]["stanceFinalLeft"][self.stanceFinal // framesPerImg]
+                    else:
+                        limit = len(self.animations[self.mode]["stanceFinalRight"]) * framesPerImg
+                        sprite = self.animations[self.mode]["stanceFinalRight"][self.stanceFinal // framesPerImg]
+                    self.stanceFinal+=1
+                    if self.stanceFinal+1>= limit:
+                        self.stanceFinal=0
+                        self.stanceCount=0
+
                 if self.action=="dashing": #dashing animation
                     if self.facing==1:
                         limit= len(self.animations[self.mode]["dashRight"])*framesPerImg
@@ -153,6 +177,7 @@ class Player:
                     self.dashTimer-=1
                     if self.dashTimer<=0:
                         self.action="idle"
+                        self.stance_state="initial"
                         self.dashCount=0
                         self.dashTimer=10
 
@@ -177,9 +202,6 @@ class Player:
                     if self.downCount+1 >=limit:
                         self.downCount=0
                         self.down_state= "normal"
-                        if self.hit_state != "got_hit":
-                            self.hit_state = "normal"
-                        
                     self.downCount+=1
             elif self.action=="jump": #jump animation
                 if self.facing==1:
@@ -191,31 +213,32 @@ class Player:
                 if self.spjumpCount +1>= limit:
                     self.spjumpCount=0
                 self.spjumpCount += 1
-            elif self.hit_state=="stationary":  #continuously getting hit animation
-                if self.facing==-1:
-                    limit= len(self.animations[self.mode]["IdleHitLeft"])*framesPerImg
-                    sprite= self.animations[self.mode]["IdleHitLeft"][self.stationaryPhaseCount// framesPerImg]
-                else:
-                    limit= len(self.animations[self.mode]["IdleHitRight"])*framesPerImg
-                    sprite= self.animations[self.mode]["IdleHitRight"][self.stationaryPhaseCount// framesPerImg]
-                if self.stationaryPhaseCount+1>= limit:
-                    self.stationaryPhaseCount=0
-                    self.down_state= "down"
-                self.stationaryPhaseCount+=1
-                
-            elif self.hit_state=="got_hit": #falling and getting hit animation
-                if self.facing==1:
-                    limit= len(self.animations[self.mode]["HitRight"])*framesPerImg
-                    sprite= self.animations[self.mode]["HitRight"][self.getHitCount//framesPerImg]
-                else:
-                    limit= len(self.animations[self.mode]["HitLeft"])*framesPerImg
-                    sprite= self.animations[self.mode]["HitLeft"][self.getHitCount//framesPerImg]
-                if self.getHitCount+1>=limit:
-                    self.getHitCount=0
-                    self.hit_state= "stationary"
-                    self.down_state= "down"
-                    self.stationaryPhaseCount=0
-                self.getHitCount+=1
+            elif self.action=="hit":
+                if self.hit_state=="stationary":  #continuously getting hit animation
+                    if self.facing==-1:
+                        limit= len(self.animations[self.mode]["IdleHitLeft"])*framesPerImg
+                        sprite= self.animations[self.mode]["IdleHitLeft"][self.stationaryPhaseCount// framesPerImg]
+                    else:
+                        limit= len(self.animations[self.mode]["IdleHitRight"])*framesPerImg
+                        sprite= self.animations[self.mode]["IdleHitRight"][self.stationaryPhaseCount// framesPerImg]
+                    if self.stationaryPhaseCount+1>= limit:
+                        self.stationaryPhaseCount=0
+                        self.down_state= "down"
+                    self.stationaryPhaseCount+=1
+                    
+                elif self.hit_state=="got_hit": #falling and getting hit animation
+                    if self.facing==1:
+                        limit= len(self.animations[self.mode]["HitRight"])*framesPerImg
+                        sprite= self.animations[self.mode]["HitRight"][self.getHitCount//framesPerImg]
+                    else:
+                        limit= len(self.animations[self.mode]["HitLeft"])*framesPerImg
+                        sprite= self.animations[self.mode]["HitLeft"][self.getHitCount//framesPerImg]
+                    if self.getHitCount+1>=limit:
+                        self.getHitCount=0
+                        self.hit_state= "stationary"
+                        self.down_state= "down"
+                        self.stationaryPhaseCount=0
+                    self.getHitCount+=1
             elif self.action=="attacking" or self.action=="signature":
                 if self.action=="signature": #getsugatensho launch animation
                     limit= len(self.animations[self.mode]["getsugatenshoRight"])*framesPerImg
@@ -262,30 +285,6 @@ class Player:
                         self.comboTimer=5
                         self.y_offset=0
                         self.action="idle"
-            
-            else:
-                if self.stancephase==0: #stance during no input
-                    if self.facing==-1:
-                        limit = len(self.animations[self.mode]["stanceLeft"]) * framesPerImg
-                        sprite = self.animations[self.mode]["stanceLeft"][self.stanceCount // framesPerImg]
-                    elif self.facing==1:
-                        limit = len(self.animations[self.mode]["stanceRight"]) * framesPerImg
-                        sprite = self.animations[self.mode]["stanceRight"][self.stanceCount // framesPerImg]
-                    if self.stanceCount +1>= limit:
-                        self.stanceCount=0
-                        self.stancephase=1
-                    self.stanceCount += 1
-                else: #continued stance when idle
-                    if self.facing==-1:
-                        limit = len(self.animations[self.mode]["stanceFinalLeft"]) * framesPerImg
-                        sprite = self.animations[self.mode]["stanceFinalLeft"][self.stanceFinal // framesPerImg]
-                    else:
-                        limit = len(self.animations[self.mode]["stanceFinalRight"]) * framesPerImg
-                        sprite = self.animations[self.mode]["stanceFinalRight"][self.stanceFinal // framesPerImg]
-                    self.stanceFinal+=1
-                    if self.stanceFinal+1>= limit:
-                        self.stanceFinal=0
-                        self.stanceCount=0
 
         self.hitbox= pygame.Rect(self.x+10, self.feet_y-4,50, 52 )
         
@@ -306,12 +305,10 @@ class Player:
             self.hit_state = "got_hit"
 
     def interrupt(self):
-        self.action="idle"
+        self.action="hit"
         self.attackCount = 0
-        self.combo_state="none"
         self.comboTimer=5
         self.comboIndex=0
         self.y_offset = 0
         pr.projectiles.clear()   # only reset animation, not physics
-        self.signature_state= "inactive"
         self.signatureCount=0
