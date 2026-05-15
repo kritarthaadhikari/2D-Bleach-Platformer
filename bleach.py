@@ -257,6 +257,7 @@ def main():
                                 h.state="blown"
                 
                 for h in en.hollows[:]:
+                    print(h.x)
                     if player.hitbox.colliderect(h.body_hitbox):
                         player.hollowattack.append(h)
                         if h.state=="idle":
@@ -272,12 +273,12 @@ def main():
                         elif(player.action in ["attacking", "combo"]):
                             enemyDamaged(h)
                         else:
-                            if h.state!="falling" and h.state!="dead":
+                            if h.state not in ["falling", "dead","attacking"]:
                                 h.state="idle"
                             player.hit_state= "normal"
                     else:
                         if h in player.hollowattack:
-                            if h.state not in ["falling", "dead"]:
+                            if h.state not in ["falling", "dead","attacking"]:
                                 h.state="idle"
                             player.hit_state= "normal"
                 if player.health<=0:

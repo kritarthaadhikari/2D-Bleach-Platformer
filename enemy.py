@@ -137,11 +137,6 @@ class Enemy:
                     if self.facing==-1:
                         self.facing=1
                 self.x+= self.facing* self.vel
-            if self.body_hitbox.colliderect(other.hitbox):
-                if self.state=="idle":
-                    self.state="attacking"
-                elif self.state=="attacking":
-                    self.state="hit"
         else:
             self.x+= -self.facing*4
         
