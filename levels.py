@@ -14,7 +14,7 @@ levels= {
     5: {"hollows":2, "spawn_delay":1, "boss": True}
 }
 
-levelComplete= False
+levelComplete= True
 global scroll 
 scroll=0
 hollow= levels[i]["hollows"]
@@ -32,12 +32,14 @@ def sideScrolling(player):
         for i in range(0,3):
             st.win.blit(st.bg,(i*st.screen_width - scroll,0))
             st.win.blit(st.arrow,(1100-scroll,450))
-        scroll += 5  # Move camera right
+        if not (player.movement_state in ["idle"] or player.facing==-1):
+            scroll += 5*7//5  # Move camera right
         if scroll >= st.screen_width:
+            player.x-=scroll# Move player back to start of new level
             scroll = 0
             st.scroll= False
             levelComplete= False
-            player.x-=st.screen_width  # Move player back to start of new level
+         
         # No display.update() here
 """Issues
 spamming space while being attacked deals infinite damage

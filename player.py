@@ -40,6 +40,7 @@ class Player:
         self.movement_state = "idle" #left, right, or idle
         self.hollowattack=[] 
         self.damage=200
+        self.hit_override=False #used to prevent hit animation from triggering when jumping
         self.animations= {
             "shikai":{
                 "walkRight": st.walkRight,
@@ -332,7 +333,7 @@ class Player:
         
         sprite_height = sprite.get_height()
         draw_y = self.feet_y - sprite_height+self.y_offset+50
-        win.blit(sprite, (draw_x - self.facing*scroll, draw_y))
+        win.blit(sprite, (draw_x-scroll , draw_y))
 
     def hit(self):
         self.health-=1

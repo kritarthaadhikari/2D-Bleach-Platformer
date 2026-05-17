@@ -19,17 +19,15 @@ def hudPannel():
     st.win.blit(st.hud_pannel, (10,10))
 
 def redrawwindow():
-    if not (lv.levelComplete or  st.scroll):
+    if not st.scroll:
         st.win.blit(st.bg, (0, 0))
     for e in en.hollows:
-        e.move(st.win,player, lv.scroll if lv.levelComplete and st.scroll else 0)
+        e.move(st.win,player)
     if lv.levelComplete:
         st.win.blit(st.arrow,(1100-lv.scroll,450))
-        if player.action not in ["idle", "jump"] and player.facing==1:
+        if player.movement_state not in ["idle"]:
             st.scroll=True
-            lv.sideScrolling(player)
-        else:
-            st.scroll=False
+        lv.sideScrolling(player)
     if player.mode=="bankai":
         player.health-=1/22
     hudPannel()
@@ -164,7 +162,8 @@ def main():
                                     if player.comboTimer>0:
                                         player.combo_state = "queued"
                             elif event.key== pygame.K_LSHIFT:
-                                if player.vel < player.x < st.screen_width - player.width - player.vel and player.staminaGauge>=20:
+                                print(screen_x, st.screen_width-player.width-player.vel)
+                                if -player.vel <screen_x< st.screen_width- player.width - player.vel and player.staminaGauge>=20:
                                     if player.action == "jump":
                                         player.air_dash = True
                                         player.dashCount = 0
@@ -179,7 +178,7 @@ def main():
                                         player.staminaGauge -= 20
 
                             elif event.key== pygame.K_z:
-                                if st.killCount!=0 and player.staminaGauge>=90:
+                                if st.killCount!=0 and player.staminaGauge>=90 and player.action!="jump":
                                     player.interrupt()
                                     player.action="signature"
                                     player.signatureCount=0
@@ -211,14 +210,22 @@ def main():
                 elif player.action != "attacking":
                     player.comboTimer = 0
 
-                if player.transform_state != "activating":
-                    if player.action not in ["attacking", "combo", "signature"] and player.transform_state!= "activating":
-                        if (keys[pygame.K_LEFT] or keys[pygame.K_a]) and player.x > player.vel:
+                if player.transform_state not in  "activating":
+                    if player.action not in ["attacking", "combo", "signature"]:
+                        # Determine camera offset and player's screen position
+                        cam_offset = lv.scroll if (lv.levelComplete and st.scroll) else 0
+                        screen_x = player.x - cam_offset
+                        # Prevent player's world x from going left of the camera view
+                        min_world_x = cam_offset
+                        if player.x < min_world_x:
+                            player.x = min_world_x
+
+                        if (keys[pygame.K_LEFT] or keys[pygame.K_a]) and screen_x > player.vel:
                             player.x -= player.vel
                             player.movement_state = "left"
                             player.facing= -1
                             player.action="knockeddown" if player.hit_state in ["got_hit", "stationary"] else player.action
-                        elif (keys[pygame.K_RIGHT] or keys[pygame.K_d]) and (player.x+ player.width+ player.vel < st.screen_width or (lv.levelComplete and st.scroll)):
+                        elif (keys[pygame.K_RIGHT] or keys[pygame.K_d]) and (screen_x + player.width + player.vel < st.screen_width or (lv.levelComplete and st.scroll)):
                             player.x += player.vel
                             player.movement_state = "right"
                             player.facing= 1
@@ -232,8 +239,10 @@ def main():
 
                     # Jump logic
                     if player.action != "jump":
+                        player.hit_override=False
                         if keys[pygame.K_UP] or keys[pygame.K_w] :
                             player.action="jump"
+                            player.hit_override=True
                     else:
                         if player.jumpCount >= -11:
                             neg = 1

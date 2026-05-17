@@ -24,7 +24,7 @@ class Enemy:
         self.fallCount= 0
         self.blownCount=0
     
-    def draw(self,win,other, scroll=0):
+    def draw(self,win,other):
         framesPerImg=4
         sprite = None
         
@@ -119,12 +119,11 @@ class Enemy:
             self.kill(other)
         
         if sprite:
-            pygame.draw.rect(win, (255,0,0), self.body_hitbox,2)
             sprite_height= sprite.get_height()
             draw_y= self.feet- sprite_height+50
-            win.blit(sprite , (self.x - scroll, draw_y))
+            win.blit(sprite , (self.x , draw_y))
     
-    def move(self, win,other, scroll=0):
+    def move(self, win,other):
         if self.state!="blown":
             if self.state=="idle" and self.health>0:
                 # Only adjust direction based on distance when NOT colliding
@@ -142,7 +141,7 @@ class Enemy:
         if self.health<=0 and self.state=="idle":
             self.state="falling"
         
-        self.draw(win,other, scroll)
+        self.draw(win,other)
     
     def gothit(self,other):
         self.health-=20*other.incrementalFactor
