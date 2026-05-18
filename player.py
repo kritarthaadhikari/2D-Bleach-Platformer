@@ -40,7 +40,7 @@ class Player:
         self.movement_state = "idle" #left, right, or idle
         self.hollowattack=[] 
         self.damage=200
-        self.hit_override=False #used to prevent hit animation from triggering when jumping
+        self.jump=False
         self.animations= {
             "shikai":{
                 "walkRight": st.walkRight,
@@ -150,7 +150,7 @@ class Player:
             self.bankaiCount+=1
 
         else:
-            if self.action in ["idle", "dashing","knockeddown"]: #idle and dash animation
+            if self.action in ["idle", "dashing","knockeddown"] and not self.jump: #idle and dash animation
                 if self.stance_state=="initial": #stance during no input
                     if self.facing==-1:
                         limit = len(self.animations[self.mode]["stanceLeft"]) * framesPerImg
@@ -214,7 +214,7 @@ class Player:
                     self.walkCount += 1
                     if self.walkCount +1 >= limit:
                         self.walkCount = 0
-            elif self.action=="jump": #jump animation
+            elif self.jump: #jump animation
                 if self.air_dash:
                     if self.facing==1:
                         limit = len(self.animations[self.mode]["dashRight"])*framesPerImg

@@ -152,7 +152,7 @@ def main():
                             st.Mpause=not st.Mpause
                             st.pause_music()
                         if not event.key==pygame.K_b:
-                            if event.key== pygame.K_SPACE and player.action not in ["dashing", "jump"]:
+                            if event.key== pygame.K_SPACE and (player.action not in ["dashing"] and not player.jump):
                                 if player.action not in ["attacking", "combo"]:
                                     player.action="attacking"
                                     player.stance_state="initial"
@@ -164,7 +164,7 @@ def main():
                             elif event.key== pygame.K_LSHIFT:
                                 print(screen_x, st.screen_width-player.width-player.vel)
                                 if -player.vel <screen_x< st.screen_width- player.width - player.vel and player.staminaGauge>=20:
-                                    if player.action == "jump":
+                                    if player.jump:
                                         player.air_dash = True
                                         player.dashCount = 0
                                         player.dashTimer = 10
@@ -178,7 +178,7 @@ def main():
                                         player.staminaGauge -= 20
 
                             elif event.key== pygame.K_z:
-                                if st.killCount!=0 and player.staminaGauge>=90 and player.action!="jump":
+                                if st.killCount!=0 and player.staminaGauge>=90 and not player.jump:
                                     player.interrupt()
                                     player.action="signature"
                                     player.signatureCount=0
@@ -231,18 +231,16 @@ def main():
                             player.facing= 1
                             player.action="knockeddown" if player.hit_state in ["got_hit", "stationary"] else player.action
                         else:
-                            if player.action not in ["dashing", "jump"]:      
+                            if player.action not in ["dashing"] and not player.jump:      
                                 player.action="idle"
                                 player.dashCount=0
                             player.movement_state = "idle"
                             player.walkCount = 0
 
                     # Jump logic
-                    if player.action != "jump":
-                        player.hit_override=False
+                    if not player.jump:
                         if keys[pygame.K_UP] or keys[pygame.K_w] :
-                            player.action="jump"
-                            player.hit_override=True
+                            player.jump=True
                     else:
                         if player.jumpCount >= -11:
                             neg = 1
@@ -250,9 +248,9 @@ def main():
                             player.feet_y -= (player.jumpCount ** 2) * 0.5 * neg
                             player.x+=player.facing*2
                             player.jumpCount -= 1
-                        else:
+                        else: 
                             player.jumpCount = 11
-                            player.action="idle"
+                            player.jump=False
                             player.feet_y=500
                             player.air_dash = False
 
