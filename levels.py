@@ -33,7 +33,7 @@ def sideScrolling(player):
             st.win.blit(st.bg,(i*st.screen_width - scroll,0))
             st.win.blit(st.arrow,(1100-scroll,450))
         if not (player.movement_state in ["idle"] or player.facing==-1):
-            scroll += 5*7//5  # Move camera right
+            scroll += 5 if not player.mode=="bankai" else 7 # Move camera right
         if scroll >= st.screen_width:
             player.x-=scroll# Move player back to start of new level
             scroll = 0
