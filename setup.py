@@ -137,6 +137,29 @@ fallLeft = [pygame.transform.flip(img, True, False) for img in fallRight]
 blownRight=[pygame.image.load(f'images/menosgrande/blown{i}.png')for i in range(1,4)] 
 blownLeft= [pygame.transform.flip(img, True, False) for img in blownRight]
 
+#Aizen ASSETS
+walk=  [pygame.image.load(f'images\enemy\Aizen\walk{i}.png').convert_alpha() for i in range(1,9)]
+walkRight= [pygame.transform.smoothscale(img,(img.get_width(),90) )for img in walk]
+walkLeft= [pygame.transform.flip(img, True, False) for img in walkRight]
+teleportRight= [pygame.image.load(f'images\enemy\Aizen\Teleport.png')]
+teleportLeft= [pygame.transform.flip(img, True, False) for img in teleportRight]
+attack= [pygame.image.load(f'images/enemy/Aizen/attack{i}.png') for i in range(1,6)]
+attackRight= [pygame.transform.smoothscale(img,(img.get_width(),90)) for img in attack]
+attackLeft= [pygame.transform.flip(img, True, False) for img in attackRight]
+airattack =[pygame.image.load(f'images/enemy/Aizen/airattack{i}.png') for i in range(1,6)]
+airattackRight= [pygame.transform.smoothscale(img,(img.get_width(),90) ) for img in airattack]
+airattackLeft= [pygame.transform.flip(img,True, False) for img in airattackRight]
+strongAttack= [pygame.image.load(f'images/enemy/Aizen/strongattack{i}.png') for i in range(1,8)]
+strongAttackRight = [pygame.transform.smoothscale(img, (img.get_width(),90) )for img in strongAttack]
+strongAttackLeft= [pygame.transform.flip(img, True, False) for img in strongAttackRight]
+stance= [pygame.image.load(f'images/enemy/Aizen/taunt{i}.png') for i in range(1,6)]
+stanceRight= [pygame.transform.smoothscale(img,(img.get_width(),90))for img in stance]
+stanceLeft= [pygame.transform.flip(img, True, False) for img in stanceRight]
+damage= [pygame.image.load(f'images/enemy/Aizen/damage{i}.png') for i in range(1,5)]
+damageRight= [pygame.transform.smoothscale(img,(img.get_width(),90) ) for img in damage]
+damageLeft= [pygame.transform.flip(img, True, False) for img in damageRight]
+
+
 # --- UI & BG ---
 hud_original = pygame.image.load('images/setup/unnamed1.png').convert_alpha()
 hud_pannel = pygame.transform.smoothscale(hud_original, (430, 150))
