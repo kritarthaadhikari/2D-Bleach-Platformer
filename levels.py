@@ -14,7 +14,7 @@ levels= {
     5: {"hollows":2, "spawn_delay":1, "boss": True}
 }
 
-levelComplete= True
+levelComplete= False
 global scroll 
 scroll=0
 hollow= levels[i]["hollows"]

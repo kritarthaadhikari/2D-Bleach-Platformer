@@ -138,9 +138,8 @@ class Enemy:
         else:
             self.x+= -self.facing*4
         
-        if self.health<=0 and self.state=="idle":
+        if self.health<=0 and self.state!="falling" and self.state!="dead":
             self.state="falling"
-        
         self.draw(win,other)
     
     def gothit(self,other):

@@ -162,7 +162,6 @@ def main():
                                     if player.comboTimer>0:
                                         player.combo_state = "queued"
                             elif event.key== pygame.K_LSHIFT:
-                                print(screen_x, st.screen_width-player.width-player.vel)
                                 if -player.vel <screen_x< st.screen_width- player.width - player.vel and player.staminaGauge>=20:
                                     if player.jump:
                                         player.air_dash = True
@@ -241,6 +240,7 @@ def main():
                     if not player.jump:
                         if keys[pygame.K_UP] or keys[pygame.K_w] :
                             player.jump=True
+                            player.interrupt()
                     else:
                         if player.jumpCount >= -11:
                             neg = 1
@@ -282,6 +282,7 @@ def main():
                             if h.state not in ["falling", "dead"]:
                                 h.state="idle"
                             player.hit_state= "normal"
+                    
                 if player.health<=0:
                     st.game_state="gameover"
                 redrawwindow()
