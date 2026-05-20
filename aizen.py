@@ -32,38 +32,38 @@ class Antagonist:
     def draw(self,win):
         framesPerimg=4
         if not self.dash and not self.attacking and not self.stationary and not self.gotHit:
-            limit= len(st.walkRight)*framesPerimg
+            limit= len(st.AizenwalkRight)*framesPerimg
             if self.facing==1:
-                sprite= st.walkRight[self.walkCount//framesPerimg]
+                sprite= st.AizenwalkRight[self.walkCount//framesPerimg]
             else:
-                sprite= st.walkLeft[self.walkCount//framesPerimg]
+                sprite= st.AizenwalkLeft[self.walkCount//framesPerimg]
             if self.walkCount+1>=limit:
                 self.walkCount=0
             self.walkCount+=1
         elif self.dash:
             if self.facing==1:
-                sprite=st.teleportRight[self.walkCount//framesPerimg]
+                sprite=st.AizenteleportRight[self.walkCount//framesPerimg]
             else:
-                sprite=st.teleportLeft[self.walkCount//framesPerimg]
+                sprite=st.AizenteleportLeft[self.walkCount//framesPerimg]
             if self.walkCount+1>=3:
                 self.walkCount=0
                 self.dash=False
             self.walkCount+=1
         elif self.gotHit:
-            limit= len(st.damageLeft)*framesPerimg
+            limit= len(st.AizendamageLeft)*framesPerimg
             if self.facing==1:
-                sprite= st.damageRight[self.gotHitcount//framesPerimg]
+                sprite= st.AizendamageRight[self.gotHitcount//framesPerimg]
             else:
-                sprite= st.damageLeft[self.gotHitcount//framesPerimg]
+                sprite= st.AizendamageLeft[self.gotHitcount//framesPerimg]
             if self.gotHitcount+1>=limit:
                 self.gotHitcount=0
             self.gotHitcount+=1
         elif self.stationary:
-            limit=len(st.stance*framesPerimg)
+            limit=len(st.Aizentance)*framesPerimg
             if self.facing==1:
-                sprite= st.stanceRight[self.stationaryCount//framesPerimg]
+                sprite= st.AizentanceRight[self.stationaryCount//framesPerimg]
             else:
-                sprite=st.stanceLeft[self.stationaryCount//framesPerimg]
+                sprite=st.AizentanceLeft[self.stationaryCount//framesPerimg]
             if self.stationaryCount+1>=limit:
                 self.stationary=False
                 self.stationaryCount=0
@@ -71,11 +71,11 @@ class Antagonist:
             
         elif self.attacking:
             if self.attack_state==1:
-                limit= len(st.attackLeft)*framesPerimg
+                limit= len(st.Aizenattack)*framesPerimg
                 if self.facing==1:
-                    sprite=st.attackRight[self.attackCount//framesPerimg]
+                    sprite=st.AizenattackRight[self.attackCount//framesPerimg]
                 else:
-                    sprite= st.attackLeft[self.attackCount//framesPerimg]
+                    sprite= st.AizenattackLeft[self.attackCount//framesPerimg]
                 if self.attackCount+1>=limit:
                     self.attacking=False
                     self.attackCount=0
@@ -83,11 +83,11 @@ class Antagonist:
                 self.attackCount+=1 
             elif self.attack_state==2:
                 self.jump=True
-                limit= len(st.airattackRight)*framesPerimg
+                limit= len(st.Aizenairattack)*framesPerimg
                 if self.facing==1:
-                    sprite= st.airattackRight[self.attackCount//framesPerimg]
+                    sprite= st.AizenairattackRight[self.attackCount//framesPerimg]
                 else:
-                    sprite= st.airattackLeft[self.attackCount//framesPerimg]
+                    sprite= st.AizenairattackLeft[self.attackCount//framesPerimg]
                 if self.attackCount+1>=limit:
                     self.attacking=False
                     self.attackCount=0
@@ -95,11 +95,11 @@ class Antagonist:
                     self.jump=False
                 self.attackCount+=1
             elif self.attack_state==3:
-                limit= len(st.strongAttack)*framesPerimg
+                limit= len(st.AizentrongAttack)*framesPerimg
                 if self.facing==1:
-                    sprite= st.strongAttackRight[self.attackCount//framesPerimg]
+                    sprite= st.AizentrongAttackRight[self.attackCount//framesPerimg]
                 else:
-                    sprite= st.strongAttackLeft[self.attackCount//framesPerimg]
+                    sprite= st.AizentrongAttackLeft[self.attackCount//framesPerimg]
                 if self.attackCount+1>=limit:
                     self.attacking=False
                     self.attackCount=0
@@ -107,9 +107,9 @@ class Antagonist:
                 self.attackCount+=1
         else:
             if self.facing==-1:
-                sprite=st.stanceLeft
+                sprite=st.AizentanceLeft
             else:
-                sprite=st.stanceRight
+                sprite=st.AizentanceRight
             self.stationary=False
             
 

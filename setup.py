@@ -1,3 +1,5 @@
+from email.iterators import walk
+
 import pygame
 
 pygame.init()
@@ -124,7 +126,6 @@ bankai= pygame.image.load('images/bankai/bankai.png')
 tr= pygame.image.load('images/bankai/TR1.png')
 tl= pygame.image.load('images/bankai/TL.png')
 
-
 # --- ENEMY ASSETS ---
 HwalkRight = [pygame.image.load(f'images/menosgrande/walk{i}.png') for i in range(2,10)]
 HwalkLeft = [pygame.transform.flip(img, True, False) for img in HwalkRight]
@@ -138,26 +139,26 @@ blownRight=[pygame.image.load(f'images/menosgrande/blown{i}.png')for i in range(
 blownLeft= [pygame.transform.flip(img, True, False) for img in blownRight]
 
 #Aizen ASSETS
-walk=  [pygame.image.load(f'images\enemy\Aizen\walk{i}.png').convert_alpha() for i in range(1,9)]
-walkRight= [pygame.transform.smoothscale(img,(img.get_width(),90) )for img in walk]
-walkLeft= [pygame.transform.flip(img, True, False) for img in walkRight]
-teleportRight= [pygame.image.load(f'images\enemy\Aizen\Teleport.png')]
-teleportLeft= [pygame.transform.flip(img, True, False) for img in teleportRight]
-attack= [pygame.image.load(f'images/enemy/Aizen/attack{i}.png') for i in range(1,6)]
-attackRight= [pygame.transform.smoothscale(img,(img.get_width(),90)) for img in attack]
-attackLeft= [pygame.transform.flip(img, True, False) for img in attackRight]
-airattack =[pygame.image.load(f'images/enemy/Aizen/airattack{i}.png') for i in range(1,6)]
-airattackRight= [pygame.transform.smoothscale(img,(img.get_width(),90) ) for img in airattack]
-airattackLeft= [pygame.transform.flip(img,True, False) for img in airattackRight]
-strongAttack= [pygame.image.load(f'images/enemy/Aizen/strongattack{i}.png') for i in range(1,8)]
-strongAttackRight = [pygame.transform.smoothscale(img, (img.get_width(),90) )for img in strongAttack]
-strongAttackLeft= [pygame.transform.flip(img, True, False) for img in strongAttackRight]
-stance= [pygame.image.load(f'images/enemy/Aizen/taunt{i}.png') for i in range(1,6)]
-stanceRight= [pygame.transform.smoothscale(img,(img.get_width(),90))for img in stance]
-stanceLeft= [pygame.transform.flip(img, True, False) for img in stanceRight]
-damage= [pygame.image.load(f'images/enemy/Aizen/damage{i}.png') for i in range(1,5)]
-damageRight= [pygame.transform.smoothscale(img,(img.get_width(),90) ) for img in damage]
-damageLeft= [pygame.transform.flip(img, True, False) for img in damageRight]
+Aizenwalk=  [pygame.image.load(f'images/enemy/Aizen/walk{i}.png').convert_alpha() for i in range(1,9)]
+AizenwalkRight= [pygame.transform.smoothscale(img,(img.get_width(),90) )for img in Aizenwalk]
+AizenwalkLeft= [pygame.transform.flip(img, True, False) for img in AizenwalkRight]
+AizenteleportRight= [pygame.image.load(f'images/enemy/Aizen/Teleport.png')]
+AizenteleportLeft= [pygame.transform.flip(img, True, False) for img in AizenteleportRight]
+Aizenattack= [pygame.image.load(f'images/enemy/Aizen/attack{i}.png') for i in range(1,6)]
+AizenattackRight= [pygame.transform.smoothscale(img,(img.get_width(),90)) for img in Aizenattack]
+AizenattackLeft= [pygame.transform.flip(img, True, False) for img in AizenattackRight]
+Aizenairattack =[pygame.image.load(f'images/enemy/Aizen/airattack{i}.png') for i in range(1,6)]
+AizenairattackRight= [pygame.transform.smoothscale(img,(img.get_width(),90) ) for img in Aizenairattack]
+AizenairattackLeft= [pygame.transform.flip(img,True, False) for img in AizenairattackRight]
+AizentrongAttack= [pygame.image.load(f'images/enemy/Aizen/strongattack{i}.png') for i in range(1,8)]
+AizentrongAttackRight = [pygame.transform.smoothscale(img, (img.get_width(),90) )for img in AizentrongAttack]
+AizentrongAttackLeft= [pygame.transform.flip(img, True, False) for img in AizentrongAttackRight]
+Aizentance= [pygame.image.load(f'images/enemy/Aizen/taunt{i}.png') for i in range(1,6)]
+AizentanceRight= [pygame.transform.smoothscale(img,(img.get_width(),90))for img in Aizentance]
+AizentanceLeft= [pygame.transform.flip(img, True, False) for img in AizentanceRight]
+Aizendamage= [pygame.image.load(f'images/enemy/Aizen/damage{i}.png') for i in range(1,5)]
+AizendamageRight= [pygame.transform.smoothscale(img,(img.get_width(),90) ) for img in Aizendamage]
+AizendamageLeft= [pygame.transform.flip(img, True, False) for img in AizendamageRight]
 
 
 # --- UI & BG ---
