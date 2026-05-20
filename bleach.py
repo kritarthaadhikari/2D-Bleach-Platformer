@@ -209,7 +209,7 @@ def main():
                 elif player.action != "attacking":
                     player.comboTimer = 0
 
-                if player.transform_state not in  "activating":
+                if player.transform_state != "activating":
                     if player.action not in ["attacking", "combo", "signature"]:
                         # Determine camera offset and player's screen position
                         cam_offset = lv.scroll if (lv.levelComplete and st.scroll) else 0
