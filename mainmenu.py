@@ -1,31 +1,32 @@
 import pygame
 import setup as st
-menu=pygame.transform.scale(pygame.image.load('images/setup/mainmenu.jpg'),(1200,800)).convert()
+menu=pygame.transform.scale(pygame.image.load('images/setup/mainmenu.jpg'),(1280,720)).convert()
 
 def draw():
     st.win.blit(menu,(0,0))
-    play_text= st.fontmm.render('PLAY', True,(255, 191, 0))
-    play_rect=play_text.get_rect(center=(st.screen_width//2, st.screen_height//2+120))
-    st.win.blit(play_text,play_rect)
-
+    playquit_text= pygame.transform.scale(pygame.image.load('images/setup/playquit.png').convert_alpha(), (400, 225))
+    st.win.blit(playquit_text,(st.screen_width//2-200, st.screen_height//2+150))
+    play_rect=pygame.Rect(st.screen_width//2-110, st.screen_height//2+203, 230, 60)
+    pygame.draw.rect(st.win, (255, 191, 0), play_rect, 2)  # Draw a border around the play button
+    # st.win.blit(play_text,play_rect)
     quit_text = st.fontmm.render('QUIT', True, (255, 191, 0))
-    quit_rect = quit_text.get_rect(center=(st.screen_width//2, st.screen_height//2 + 220))
-    st.win.blit(quit_text, quit_rect)
+    quit_rect = pygame.Rect(st.screen_width//2-110, st.screen_height//2+280, 230, 60)
+    pygame.draw.rect(st.win, (255, 191, 0), quit_rect, 2)  # Draw a border around the quit button
+    # st.win.blit(quit_text, quit_rect)
 
     pygame.display.update()
-    return play_rect, quit_rect
+    return  quit_rect
 
 def handleMenu():
-    play_rect,quit_rect= draw()
+    quit_rect= draw()
     for event in pygame.event.get():
         if event.type==pygame.QUIT:
             pygame.quit()
             quit()
 
         if event.type==pygame.MOUSEBUTTONDOWN:
-            if play_rect.collidepoint(event.pos):
-                st.game_state= "start"
-            elif quit_rect.collidepoint(event.pos):
+            
+            if quit_rect.collidepoint(event.pos):
                 pygame.quit()
                 quit()
 

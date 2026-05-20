@@ -5,8 +5,8 @@ import pygame
 pygame.init()
 pygame.mixer.init()
 
-screen_width = 1200
-screen_height = 600
+screen_width = 1280
+screen_height = 720
 win = pygame.display.set_mode((screen_width, screen_height))
 surface =pygame.Surface((screen_width,screen_height),pygame.SRCALPHA)
 #“This surface will use RGBA 

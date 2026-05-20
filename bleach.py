@@ -58,7 +58,6 @@ last_enemy_spawn = time.time()
 
 def createEnemies():
     global last_enemy_spawn
-
     if not st.game_state=="mainmenu" and not lv.levelComplete:
         if len(lv.hollows)==0:
             enemy = en.Enemy(110, 149, 1200, 500)
