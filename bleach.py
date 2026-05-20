@@ -9,7 +9,7 @@ import levels as lv
 import random
 
 clock = pygame.time.Clock()
-player = pl.Player(64, 64, 10, 500)
+player = pl.Player(64, 64, 10, st.feet_y_initial)
 
 def hudPannel():
     pygame.draw.rect(st.win,(255,0,0),(212,59,212,23))
@@ -60,11 +60,11 @@ def createEnemies():
     global last_enemy_spawn
     if not st.game_state=="mainmenu" and not lv.levelComplete:
         if len(lv.hollows)==0:
-            enemy = en.Enemy(110, 149, 1200, 500)
+            enemy = en.Enemy(110, 149, 1200, st.feet_y_initial)
             en.hollows.append(enemy)
             lv.hollows.append(enemy)
         if (time.time() - last_enemy_spawn >= lv.levels[lv.i]["spawn_delay"]) and not len(lv.hollows)==lv.hollow:
-            enemy = en.Enemy(110, 149, random.randint(0,1)*st.screen_width+random.choice([-1,1]*100), 500)
+            enemy = en.Enemy(110, 149, random.randint(0,1)*st.screen_width+random.choice([-1,1]*100), st.feet_y_initial)
             enemy.facing=-1 if enemy.x==st.screen_width else 1
             lv.hollows.append(enemy)
             en.hollows.append(enemy)
@@ -91,11 +91,11 @@ def draw_pause():
 def reset():
     global player,enemy, last_enemy_spawn
     # Reset player
-    player = pl.Player(64, 64, 10, 500)
+    player = pl.Player(64, 64, 10, st.feet_y_initial)
 
     # Reset enemies
     en.hollows.clear()
-    enemy = en.Enemy(110, 149, 1200, 500)
+    enemy = en.Enemy(110, 149, 1200, st.feet_y_initial)
     en.hollows.append(enemy)
 
     # Reset projectiles
@@ -250,7 +250,7 @@ def main():
                         else: 
                             player.jumpCount = 11
                             player.jump=False
-                            player.feet_y=500
+                            player.feet_y=st.feet_y_initial
                             player.air_dash = False
 
                 # Collisions
