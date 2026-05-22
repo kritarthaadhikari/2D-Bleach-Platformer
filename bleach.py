@@ -24,9 +24,9 @@ def draw_bar(x, y, width, height,
     global shine_x
     fill_width = int((value / max_value) * width)
     glow_points = [
-        (x + 20, y),
+        (x + 5, y),
         (x + width, y),
-        (x + width - 20, y + height),
+        (x + width - 10, y + height),
         (x, y + height)
     ]
     pygame.draw.polygon(st.win, glow_color, glow_points, 6)
@@ -38,8 +38,8 @@ def draw_bar(x, y, width, height,
         g = color1[1] + (color2[1] - color1[1]) * ratio
         b = color1[2] + (color2[2] - color1[2]) * ratio
         line_points = [
-            (x + i + 20, y),
-            (x + i + 21, y),
+            (x + i + 10, y),
+            (x + i + 11, y),
             (x + i + 1, y + height),
             (x + i, y + height)
         ]
@@ -107,8 +107,8 @@ def redrawwindow():
         st.win.blit(st.mute,(st.screen_width-100,70))
      # HP BAR
     draw_bar(
-        290, 85,
-        350, 25,
+        230, 90,
+        270, 10,
         player.health, 120,
         (120,0,0),
         (255,60,60),
@@ -117,8 +117,8 @@ def redrawwindow():
 
     # STAMINA BAR
     draw_bar(
-        290, 240,
-        350, 25,
+        230, 215,
+        250, 10,
         player.staminaGauge, 100,
         (0,100,180),
         (120,240,255),
@@ -127,8 +127,8 @@ def redrawwindow():
 
     # ENERGY BAR
     draw_bar(
-        290, 315,
-        350, 25,
+        320, 155,
+        180, 15,
         player.ultimateGauge, 160,
         (70,0,120),
         (220,120,255),
