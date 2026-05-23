@@ -1,4 +1,4 @@
-import turtle
+
 import pygame
 import setup as st
 import projectile as pj
@@ -12,6 +12,7 @@ import random
 clock = pygame.time.Clock()
 player = pl.Player(64, 64, 10, st.feet_y_initial)
 shine_x=-100
+DEBUG = True
 
 def hudPannel():
     st.win.blit(st.hud_pannel, (-20,-60))
@@ -38,17 +39,18 @@ def draw_bar(x, y, width, height,
 
     inner_width = fill_width - 7
     inner_height = height - 4
-    for i in range(inner_width):
-        ratio = i / inner_width
-        r = color1[0] + (color2[0] - color1[0]) * ratio
-        g = color1[1] + (color2[1] - color1[1]) * ratio
-        b = color1[2] + (color2[2] - color1[2]) * ratio
-        pygame.draw.line(
-        st.win,
-        (int(r), int(g), int(b)),
-        (inner_x + i-4, inner_y),
-        (inner_x + i-7, inner_y + inner_height+2)
-        )
+    if inner_width > 0:
+        for i in range(inner_width):
+            ratio = i / inner_width
+            r = color1[0] + (color2[0] - color1[0]) * ratio
+            g = color1[1] + (color2[1] - color1[1]) * ratio
+            b = color1[2] + (color2[2] - color1[2]) * ratio
+            pygame.draw.line(
+                st.win,
+                (int(r), int(g), int(b)),
+                (inner_x + i-4, inner_y),
+                (inner_x + i-7, inner_y + inner_height+2)
+            )
 
     #BORDER
     pygame.draw.polygon(st.win, (220,220,220), glow_points, 1)
@@ -109,8 +111,8 @@ def redrawwindow():
      # HP BAR
     draw_bar(
         150, 58,
-        190, 8,
-        player.health, 120,
+        195, 8,
+        player.health, 200,
         (120,0,0),
         (255,60,60),
         (255,0,0)
@@ -137,6 +139,19 @@ def redrawwindow():
         animated=True
     )
 
+    if DEBUG:
+        fps_surf = st.font.render(f"FPS: {int(clock.get_fps())}", True, (255,255,0))
+        st.win.blit(fps_surf, (10, 10))
+        try:
+            pygame.draw.rect(st.win, (255,0,0), player.hitbox, 1)
+            for h in en.hollows:
+                pygame.draw.rect(st.win, (0,255,0), h.body_hitbox, 1)
+                pygame.draw.rect(st.win, (255,255,0), h.attack_hitbox, 1)
+        except Exception:
+            pass
+        info = f"x:{int(player.x)} action:{player.action} walk:{getattr(player,'walkCount',0)}"
+        st.win.blit(st.font.render(info, True, (255,255,255)), (10, 30))
+
     pygame.display.update()   
 
 last_enemy_spawn = time.time()
@@ -146,11 +161,13 @@ def createEnemies():
     if not st.game_state=="mainmenu" and not lv.levelComplete:
         if len(lv.hollows)==0:
             enemy = en.Enemy(110, 149, 1200, st.feet_y_initial)
+            st.hollowSound.play(0)
             en.hollows.append(enemy)
             lv.hollows.append(enemy)
         if (time.time() - last_enemy_spawn >= lv.levels[lv.i]["spawn_delay"]) and not len(lv.hollows)==lv.hollow:
             enemy = en.Enemy(110, 149, random.randint(0,1)*st.screen_width+random.choice([-1,1]*100), st.feet_y_initial)
             enemy.facing=-1 if enemy.x==st.screen_width else 1
+            st.hollowSound.play(0)
             lv.hollows.append(enemy)
             en.hollows.append(enemy)
             last_enemy_spawn = time.time()
@@ -211,6 +228,9 @@ def main():
     while run:
         clock.tick(30)
         events= pygame.event.get()
+        # compute camera offset / screen position early so event handlers can use it
+        cam_offset = lv.scroll if (lv.levelComplete and st.scroll) else 0
+        screen_x = player.x - cam_offset
         for event in events:
             if event.type == pygame.QUIT:
                 run = False

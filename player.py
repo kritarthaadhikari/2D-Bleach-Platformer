@@ -24,7 +24,7 @@ class Player:
         self.stationaryPhaseCount = 0 #getting hit continuation
         self.downCount = 0 #knocked out 
         self.down_state = "normal" # normal or down
-        self.health = 120
+        self.health = 200
         self.signatureCount = 0
         self.staminaGauge = 100
         self.ultimateGauge = 160
@@ -93,6 +93,13 @@ class Player:
                 "attackFollowUpLeft": st.bankaiFollowUpLeft,
                 "transformRight": st.bankaiTransformRight,
                 "transformLeft": st.bankaiTransformLeft 
+            },
+            "visored" :{
+                "transformRight": st.VisoredTransformRight,
+                "transformLeft": st.VisoredTransformLeft,
+                "transformBackRight": st.VisoredToBankaiRight,
+                "transformBackLeft": st.VisoredToBankaiLeft
+                
             }
         }
 
@@ -103,8 +110,15 @@ class Player:
             self.damage=500
             self.incrementalFactor=2
             self.transform_state="activating"
-            self.ultimateGauge=0
+            self.ultimateGauge=160
             st.bankaiSound.play(0)
+        elif self.mode=="bankai":
+            self.mode= "visored"
+            self.vel=11
+            self.damage=750
+            self.incrementalFactor=4
+            self.transform_state="activating"
+            self.ultimateGauge=0
         else:
             self.mode= "shikai"
             self.vel=5
@@ -128,11 +142,14 @@ class Player:
         limit=0
         sprite = st.jumpLeft[0]
         if self.transform_state == "activating":
-            limit=len(self.animations[self.mode]["transformRight"])*4
+            framesPerImg=4
+            if self.mode=="visored":
+                framesPerImg=6
+            limit=len(self.animations[self.mode]["transformRight"])*framesPerImg
             if self.facing==1:
-                sprite= self.animations[self.mode]["transformRight"][self.bankaiCount//4]
+                sprite= self.animations[self.mode]["transformRight"][self.bankaiCount//framesPerImg]
             else:
-                sprite= self.animations[self.mode]["transformLeft"][self.bankaiCount//4]
+                sprite= self.animations[self.mode]["transformLeft"][self.bankaiCount//framesPerImg]
             if self.mode=="bankai":
                 if 16<=self.bankaiCount<=24:
                     st.win.blit(st.bankai, (self.x-self.facing*(70+scroll), self.feet_y- st.bankai.get_height()+50))
@@ -282,7 +299,7 @@ class Player:
                         self.action="idle"
 
                 else: #normal attack animation
-                    self.x+= self.facing//2
+                    self.x += self.facing * 0.5
                     limit= len(self.animations[self.mode]["attackRight"])*framesPerImg
                     if self.facing==1:
                         sprite= self.animations[self.mode]["attackRight"][self.attackCount// framesPerImg]
@@ -325,11 +342,11 @@ class Player:
 
         self.hitbox= pygame.Rect(self.x+10, self.feet_y-4,50, 52 )
         
-        draw_x= self.x
-        if not self.mode=="bankai" or  ((self.animations['bankai']['stanceRight'][0] and self.facing==1)and (self.action not in ["attacking", "combo"])
-                                        or((self.mode=="bankai" and (self.action in ["attacking", "combo"]) and self.facing==-1))):
-            if self and self.facing==-1 or self.mode=="bankai":
-                draw_x= self.x -sprite.get_width()+50
+        draw_x = self.x
+        if not self.mode == "bankai" or (((self.animations['bankai']['stanceRight'][0] and self.facing == 1) and (self.action not in ["attacking", "combo"]))
+                                           or ((self.mode == "bankai" and (self.action in ["attacking", "combo"]) and self.facing == -1))):
+            if (self.facing == -1) or (self.mode == "bankai"):
+                draw_x = self.x - sprite.get_width() + 50
         
         sprite_height = sprite.get_height()
         draw_y = self.feet_y - sprite_height+self.y_offset+50

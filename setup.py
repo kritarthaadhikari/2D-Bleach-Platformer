@@ -14,7 +14,7 @@ ground= pygame.transform.smoothscale(pygame.image.load('images/setup/ground.png'
 # (Red, Green, Blue, Alpha) instead of just RGB."
 
 pygame.mixer.music.load('audio/on the precipice of death.mp3')
-pygame.mixer.music.set_volume(0.6)
+pygame.mixer.music.set_volume(0.4)
 pygame.mixer.music.play(-1)
 
 bankaiSound= pygame.mixer.Sound('audio/ichigobankai.wav')
@@ -23,6 +23,8 @@ bankaiSound.set_volume(0.3)
 getsugatenshoSound= pygame.mixer.Sound('audio/getsugatensho.wav')
 getsugatenshoSound.set_volume(0.3)
 
+hollowSound= pygame.mixer.Sound('audio/hollowscream.mp3')
+hollowSound.set_volume(0.6)
 #Alpha = transparency value:
 # 0 → fully transparent
 # 255 → fully opaque
@@ -122,6 +124,12 @@ bankaiFollowUpLeft = [pygame.transform.flip(img, True, False) for img in bankaiF
 bankaiTransformRight= [pygame.image.load(f'images/bankai/bankai{i}.png') for i in range(1,9)]
 bankaiTransformLeft = [pygame.transform.flip(img, True, False) for img in bankaiTransformRight]
 getsugatensho= pygame.image.load('images/bankai/getsuga.png')
+
+#Visored
+VisoredTransformRight= [pygame.image.load(f'images/visored/transform{i}.png') for i in range(1,4)]
+VisoredTransformLeft= [pygame.transform.flip(img, True, False) for img in VisoredTransformRight]
+VisoredToBankaiRight = [pygame.image.load(f'images/visored/transformback{i}.png') for i in range(1,5)]
+VisoredToBankaiLeft = [pygame.transform.flip(img, True, False) for img in VisoredToBankaiRight]
 
 #bankai visuals
 bankai= pygame.image.load('images/bankai/bankai.png')
