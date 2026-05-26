@@ -1,5 +1,6 @@
 import setup as st
 import pygame
+import projectile as pj
 class Aizen:
     def __init__(self, x, y):
         self.x = x
@@ -11,6 +12,7 @@ class Aizen:
         self.facing=-1
         self.idleCount=0
         self.action="idle" #idle, sec_idle, walk, attack, hit, death
+        self.attackCount=0
 
     def draw(self, win):
         self.hitbox= pygame.Rect(self.x+10, self.y-4, 74, 74)
@@ -46,10 +48,31 @@ class Aizen:
                 sprite=st.AizenStanceFinalRight[self.idleCount//framesPerImg]
             if self.idleCount+1>=limit: 
                 self.idleCount=0
-                self.action="idle"
+                self.action="final_idle"
             else:
                 self.idleCount+=1
-        st.win.blit(sprite, (self.x, self.y))
+        elif self.action=="cero":
+            limit=len(st.AizenCeroRight)*framesPerImg
+            if self.facing==1:
+                sprite=st.AizenCeroRight[self.attackCount//framesPerImg]
+            else:
+                sprite=st.AizenCeroLeft[self.attackCount//framesPerImg]
+            if self.attackCount+1>=limit:
+                self.attackCount=0
+                self.action="idle"
+        else:
+            limit=len(st.AizenFinalIdleRight)*framesPerImg
+            if self.facing==-1:
+                sprite=st.AizenFinalIdleLeft[self.idleCount//framesPerImg]
+            else:
+                sprite=st.AizenFinalIdleRight[self.idleCount//framesPerImg]
+            if self.idleCount+1>=limit:
+                self.idleCount=0
+                self.action="final_idle"
+        win.blit(sprite, (self.x, self.y))
+
+    
+
         
 
 

@@ -152,7 +152,8 @@ def redrawwindow():
     #         pass
     #     info = f"x:{int(player.x)} action:{player.action} walk:{getattr(player,'walkCount',0)}"
     #     st.win.blit(st.font.render(info, True, (255,255,255)), (10, 30))
-    aizen.draw(st.win)
+    if lv.boss:
+        aizen.draw(st.win)
     pygame.display.update()   
 
 last_enemy_spawn = time.time()
@@ -177,7 +178,7 @@ def createEnemies():
         if lv.hollows!=[] and st.killCountperRound==lv.hollow:
             st.killCountperRound=0
             lv.i+=1
-            lv.hollow,lv.delay=lv.increment()
+            lv.hollow,lv.delay,lv.boss=lv.increment()
             lv.hollows.clear()
             lv.levelComplete=True
         

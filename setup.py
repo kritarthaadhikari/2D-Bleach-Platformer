@@ -61,7 +61,8 @@ current_time_bankai=0
 slash = [pygame.image.load(f'images/shot/fire{i}.png') for i in range(1,5)]
 slashright = [pygame.transform.smoothscale(img, (64,64)) for img in slash]
 slashLeft = [pygame.transform.flip(img, True, False) for img in slashright]
-cero = pygame.transform.smoothscale(pygame.image.load('images/shot/cero.png').convert_alpha(), (64, 64))
+ceroRight = [pygame.transform.smoothscale(pygame.image.load('images/shot/cero.png').convert_alpha(), (64, 64))]*200
+ceroLeft =[pygame.transform.flip(img, True, False) for img in ceroRight]
 getsugatenshoProjectileRight = [pygame.transform.smoothscale(pygame.image.load(f'images/shot/getsuga{i}.png'), (64, 64)) for i in range(1,3)]*100
 getsugatenshoProjectileLeft = [pygame.transform.flip(img, True, False) for img in getsugatenshoProjectileRight]
 gargantaRight= [pygame.transform.smoothscale(pygame.image.load(f'images/menosgrande/garganta1.png'), (36, 190)),
@@ -182,6 +183,9 @@ AizenCeroRight= [pygame.image.load(f'images/Aizen/cero{i}.png') for i in range(1
 AizenCeroLeft= [pygame.transform.flip(img, True, False) for img in AizenCeroRight]
 AizenStanceFinalRight= [pygame.image.load(f'images/Aizen/aurafarm{i}.png') for i in range(1,6)]
 AizenStanceFinalLeft= [pygame.transform.flip(img, True, False) for img in AizenStanceFinalRight]
+AizenFinalIdleRight= [pygame.image.load('images/Aizen/aurafarm1.png'),
+                      pygame.image.load('images/Aizen/aurafarm5.png')]
+AizenFinalIdleLeft= [pygame.transform.flip(img,True, False) for img in AizenFinalIdleRight]
 
 # --- UI & BG ---
 hud_original = pygame.image.load('images/setup/hudpannel.png').convert_alpha()
