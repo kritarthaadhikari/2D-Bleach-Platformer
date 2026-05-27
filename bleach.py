@@ -34,10 +34,8 @@ def draw_bar(x, y, width, height,
     pygame.draw.polygon(st.win, glow_color, glow_points, 2)
 
     #GRADIENT FILL
-
     inner_x = x + 8
     inner_y = y + 2
-
     inner_width = fill_width - 7
     inner_height = height - 4
     if inner_width > 0:
@@ -153,7 +151,8 @@ def redrawwindow():
     #     info = f"x:{int(player.x)} action:{player.action} walk:{getattr(player,'walkCount',0)}"
     #     st.win.blit(st.font.render(info, True, (255,255,255)), (10, 30))
     if lv.boss:
-        aizen.draw(st.win)
+       
+        aizen.move(player)
     pygame.display.update()   
 
 last_enemy_spawn = time.time()
@@ -167,20 +166,24 @@ def createEnemies():
             st.hollowSound.play(0)
             en.hollows.append(enemy)
             lv.hollows.append(enemy)
-        if (time.time() - last_enemy_spawn >= lv.levels[lv.i]["spawn_delay"]) and not len(lv.hollows)==lv.hollow:
-            enemy = en.Enemy(110, 149, random.randint(0,1)*st.screen_width+random.choice([-1,1]*100), st.feet_y_initial)
-            enemy.facing=-1 if enemy.x==st.screen_width else 1
-            enemy.static_x=enemy.x
-            st.hollowSound.play(0)
-            lv.hollows.append(enemy)
-            en.hollows.append(enemy)
-            last_enemy_spawn = time.time()
+        if lv.i<=5:
+            if (time.time() - last_enemy_spawn >= lv.levels[lv.i]["spawn_delay"]) and not len(lv.hollows)==lv.hollow:
+                enemy = en.Enemy(110, 149, random.randint(0,1)*st.screen_width+random.choice([-1,1]*100), st.feet_y_initial)
+                enemy.facing=-1 if enemy.x==st.screen_width else 1
+                enemy.static_x=enemy.x
+                st.hollowSound.play(0)
+                lv.hollows.append(enemy)
+                en.hollows.append(enemy)
+                last_enemy_spawn = time.time()
         if lv.hollows!=[] and st.killCountperRound==lv.hollow:
             st.killCountperRound=0
             lv.i+=1
-            lv.hollow,lv.delay,lv.boss=lv.increment()
-            lv.hollows.clear()
-            lv.levelComplete=True
+            if lv.i>5 and aizen.status=="dead":    
+                gameEnded()
+            if lv.i<=5:
+                lv.hollow,lv.delay,lv.boss=lv.increment()
+                lv.hollows.clear()
+                lv.levelComplete=True
         
 def draw_pause():
     pygame.draw.rect(st.surface,(128,128,128,150),[0,0, st.screen_width,st.screen_height])
@@ -224,6 +227,9 @@ def enemyDamaged(enemy):
         enemy.gothit(player)
         if player.action=="combo":
             enemy.health-=40*player.incrementalFactor
+
+def gameEnded():
+    pass
 
 def main():
     run = True

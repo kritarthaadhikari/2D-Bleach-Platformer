@@ -1,11 +1,12 @@
 import setup as st
 import pygame
 import projectile as pj
+import levels as lv
 class Aizen:
     def __init__(self, x, y):
         self.x = x
         self.y = y
-        self.hitbox= pygame.Rect(self.x+10, self.y-4, 74, 74)
+        self.hitbox= pygame.Rect(self.x+10, self.y-4, 10, 52)
         self.health=800
         self.vel=6
         self.walkCount=0
@@ -14,9 +15,10 @@ class Aizen:
         self.action="idle" #idle, sec_idle, walk, attack, hit, death
         self.attackCount=0
         self.hitCount=0
+        self.status= "alive" #dead, alive
 
     def draw(self, win):
-        self.hitbox= pygame.Rect(self.x+10, self.y-4, 74, 74)
+        self.hitbox= pygame.Rect(self.x+10, self.y, 25, 52)
         pygame.draw.rect(win, (255,0,0), self.hitbox,2)
         framesPerImg=3
         if self.action=="idle":
@@ -143,9 +145,13 @@ class Aizen:
                 self.idleCount=0
                 self.action="final_idle"
         win.blit(sprite, (self.x, self.y))
-
     
-
-        
-
-
+    def move(self,other):
+        if self.status!="dead":
+            self.action="walk"
+            if other.x-self.x>40:
+                self.facing=1
+            elif self.x-other.x>20:
+                self.facing=-1
+            self.x+=self.facing*self.vel
+        self.draw(st.win)
