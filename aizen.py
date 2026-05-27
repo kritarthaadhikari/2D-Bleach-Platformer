@@ -8,7 +8,7 @@ class Aizen:
         self.y = y
         self.hitbox= pygame.Rect(self.x+10, self.y-4, 10, 52)
         self.health=800
-        self.vel=6
+        self.vel=5
         self.walkCount=0
         self.facing=-1
         self.idleCount=0
@@ -147,11 +147,15 @@ class Aizen:
         win.blit(sprite, (self.x, self.y))
     
     def move(self,other):
-        if self.status!="dead":
-            self.action="walk"
-            if other.x-self.x>40:
-                self.facing=1
-            elif self.x-other.x>20:
-                self.facing=-1
-            self.x+=self.facing*self.vel
+        if self.status=="alive":
+            if abs(other.x-self.x)>40 and other.hit_state =="normal":
+                self.action="walk"
+                if other.x-self.x>40:
+                    self.facing=1
+                elif self.x-other.x>20:
+                    self.facing=-1
+                self.x+=self.facing*self.vel
+            else:
+                if self.action not in ["idle","sec_idle","third_idle","final_idle"]:
+                    self.action="idle"
         self.draw(st.win)
