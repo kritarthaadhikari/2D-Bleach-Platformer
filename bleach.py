@@ -11,7 +11,7 @@ import aizen
 
 clock = pygame.time.Clock()
 player = pl.Player(64, 64, 10, st.feet_y_initial)
-aizen= aizen.Aizen(900, st.feet_y_initial-64)
+aizen= aizen.Aizen(900, st.feet_y_initial)
 shine_x=-100
 DEBUG = True
 
@@ -92,10 +92,13 @@ def redrawwindow():
     player.draw(st.win, lv.scroll if lv.levelComplete and st.scroll else 0)
     text= st.font.render(f"Score: {st.score}",1,(255,255,255))
     st.win.blit(text,(st.screen_width-text.get_width()-20, 0))
-    if player.signatureCount>=21:
-        for p in pj.projectiles[:]:
-           p.move(player)
-           p.draw(st.win, lv.scroll if lv.levelComplete and st.scroll else 0, player)
+    for p in pj.projectiles[:]:
+        if isinstance(p, pj.Cero):
+            p.move()
+            p.draw(st.win)
+        elif player.signatureCount>=21:
+            p.move(player)
+            p.draw(st.win, lv.scroll if lv.levelComplete and st.scroll else 0, player)
     st.current_time= pygame.time.get_ticks()
     if st.show_text:
         if st.killCount==0 and st.current_time-st.text_start_time<= st.text_duration:
@@ -216,6 +219,7 @@ def reset():
     st.pressed = False
 
     lv.i=1
+    lv.hollow,lv.delay,lv.boss=lv.increment()
     # Reset timers
     last_enemy_spawn = time.time()
     # Unpause
@@ -297,10 +301,15 @@ def main():
                                     player.action="signature"
                                     player.signatureCount=0
                                     player.staminaGauge-=80
+                                    for h in en.hollows[:]:
+                                        if player.hitbox.colliderect(h.attack_hitbox):
+                                            player.action="hit"
                                     new_slash= pj.Projectile(player.x, player.feet_y-10,64,64,player.facing)   
                                     new_slash.getsugatenshou=True
                                     pj.projectiles.append(new_slash)
                                     st.getsugatenshoSound.play(0)
+                                    if player.action=="hit":
+                                        st.getsugatenshoSound.stop()
                                 else:
                                     st.show_text= True
                                     st.text_start_time= pygame.time.get_ticks()
@@ -371,6 +380,11 @@ def main():
 
                 # Collisions
                 for p in pj.projectiles[:]:
+                    if isinstance(p, pj.Cero) and p.colliderect(player.hitbox):
+                        player.hit()
+                        player.interrupt()
+                        p.kill()
+                        continue
                     for h in en.hollows:
                         if p.colliderect(h.body_hitbox) and player.signatureCount>=21:
                             if h not in p.hitEnemies:
@@ -380,6 +394,16 @@ def main():
                                 h.blown=True
                                 h.blownCount=0
                 
+                if lv.boss and aizen.status=="alive":
+                    if player.hitbox.colliderect(aizen.hitbox) and player.action in ["attacking", "combo"]:
+                        aizen.hit(30 * player.incrementalFactor)
+                        if aizen.health <= 0:
+                            aizen.status = "dead"
+                            aizen.action = "hit"
+                    if aizen.hitbox.colliderect(player.hitbox) and aizen.action in ["attack", "jump_attack", "combo_attack", "cero"]:
+                        player.hit()
+                        player.interrupt()
+
                 for h in en.hollows[:]:
                     if player.hitbox.colliderect(h.body_hitbox):
                         if h not in player.hollowattack:

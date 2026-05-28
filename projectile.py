@@ -54,28 +54,36 @@ class Projectile(pygame.Rect):
 class Cero(Projectile):
     def __init__(self, x, y, width, height, facing):
         super().__init__(x, y, width, height, facing)
-        self.vel=30
-        self.cero=False
+        self.vel=18
+        self.cero=True
+        self.start_x=x
+        self.max_distance=650
     
     def draw(self,win):
         framesPerImg=3
         sprite=None
         if self.cero:
+            if not st.ceroRight:
+                return
             limit=len(st.ceroRight)*framesPerImg
+            frame = min(self.count // framesPerImg, len(st.ceroRight)-1)
             if self.direction==1:
-                sprite=st.ceroRight[self.count//framesPerImg]
+                sprite=st.ceroRight[frame]
             else:
-                sprite=st.ceroLeft[self.count//framesPerImg]
+                sprite=st.ceroLeft[frame]
             if self.count+1>=limit:
                 self.count=0
                 self.cero=False
                 self.kill()
             else:
                 self.count+=1
-        win.blit(sprite,(self.x,self.y))
+        if sprite:
+            win.blit(sprite,(self.x,self.y))
 
     def move(self):
-        self.x+=self.direction*self.vel
+        self.x += self.direction * self.vel
+        if abs(self.x - self.start_x) >= self.max_distance:
+            self.kill()
 
     def kill(self):
         super().kill()

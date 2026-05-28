@@ -140,7 +140,7 @@ class Player:
     def draw(self, win, scroll=0):
         framesPerImg = 3
         limit=0
-        sprite = st.jumpLeft[0]
+        sprite = self.animations[self.mode]["stanceRight"][0]
         if self.transform_state == "activating":
             framesPerImg=4
             if self.mode=="visored":
@@ -366,3 +366,4 @@ class Player:
         self.y_offset = 0
         pr.projectiles.clear()   # only reset animation, not physics
         self.signatureCount=0
+        st.getsugatenshoSound.stop()

@@ -186,6 +186,7 @@ AizenStanceFinalLeft= [pygame.transform.flip(img, True, False) for img in AizenS
 AizenFinalIdleRight= [pygame.image.load('images/Aizen/aurafarm1.png'),
                       pygame.image.load('images/Aizen/aurafarm5.png')]
 AizenFinalIdleLeft= [pygame.transform.flip(img,True, False) for img in AizenFinalIdleRight]
+AizenTitle= pygame.transform.smoothscale(pygame.image.load('images/setup/aizen_title.png'),(150,30))
 
 # --- UI & BG ---
 hud_original = pygame.image.load('images/setup/hudpannel.png').convert_alpha()
