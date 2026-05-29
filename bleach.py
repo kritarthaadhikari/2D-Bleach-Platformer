@@ -89,7 +89,7 @@ def redrawwindow():
     if player.mode=="bankai":
         player.health-=1/30
     hudPannel()
-    player.draw(st.win, lv.scroll if lv.levelComplete and st.scroll else 0)
+    # player.draw(st.win, lv.scroll if lv.levelComplete and st.scroll else 0)
     text= st.font.render(f"Score: {st.score}",1,(255,255,255))
     st.win.blit(text,(st.screen_width-text.get_width()-20, 0))
     for p in pj.projectiles[:]:
@@ -162,7 +162,7 @@ last_enemy_spawn = time.time()
 
 def createEnemies(): 
     global last_enemy_spawn
-    if not st.game_state=="mainmenu" and not lv.levelComplete:
+    if not st.game_state=="mainmenu" and not lv.levelComplete and not lv.boss:
         if len(lv.hollows)==0:
             enemy = en.Enemy(110, 149, 1200, st.feet_y_initial)
             enemy.static_x=1200
@@ -240,7 +240,7 @@ def main():
     st.game_state="mainmenu"
     restart, mainmenu = None, None
     while run:
-        clock.tick(30)
+        clock.tick(24)
         events= pygame.event.get()
         # compute camera offset / screen position early so event handlers can use it
         cam_offset = lv.scroll if (lv.levelComplete and st.scroll) else 0

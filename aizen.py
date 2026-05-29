@@ -42,13 +42,13 @@ class Aizen:
         self.x = x
         self.y = y
         self.hitbox = pygame.Rect(self.x+10, self.y-4, 10, st.AizenTitle.get_height()+20)
-
+        self.hitbox_x=self.x+10
         self.max_health = 800
         self.health = 800
 
-        self.vel = 5
+        self.vel = 7
         self.walkCount = 0
-        self.facing = -1
+        self.facing = 1
         self.idleCount = 0
         self.action = "idle"
         self.attackCount = 0
@@ -68,14 +68,13 @@ class Aizen:
             max_hp=self.max_health
         )
 
-    def draw(self, win):
-        self.hitbox = pygame.Rect(self.x+10, self.y, 25, 52)
-        pygame.draw.rect(win, (255, 0, 0), self.hitbox, 2)
+    def draw(self, win,other):
         framesPerImg = 3
         if self.action == "idle":
             animation = st.AizenStanceLeft if self.facing == -1 else st.AizenStanceRight
             limit = len(animation) * framesPerImg
             sprite = animation[self._frame_index(self.idleCount, framesPerImg, animation)]
+            self.hitbox = pygame.Rect(self.x-50, self.y, 25, 52)
             if self.idleCount + 1 >= limit:
                 self.idleCount = 0
                 self.action = "sec_idle"
@@ -140,12 +139,20 @@ class Aizen:
             else:
                 self.attackCount += 1
         elif self.action == "combo_attack":
+            if other.x-self.x>0:
+                self.facing==1
             animation = st.AizensecondAttackRight if self.facing == 1 else st.AizensecondAttackLeft
             limit = len(animation) * framesPerImg
+            self.x += self.facing * 5
+            if self.attackCount < limit // 2:
+                self.y -= 10
+            else:
+                self.y += 10
             sprite = animation[self._frame_index(self.attackCount, framesPerImg, animation)]
             if self.attackCount + 1 >= limit:
                 self.attackCount = 0
                 self.action = "idle"
+                self.y=616
             else:
                 self.attackCount += 1
         elif self.action == "teleport":
@@ -161,7 +168,7 @@ class Aizen:
             animation = st.AizenRunRight if self.facing == 1 else st.AizenRunLeft
             limit = len(animation) * framesPerImg
             sprite = animation[self._frame_index(self.walkCount, framesPerImg, animation)]
-
+            self.hitbox = pygame.Rect(self.x-60, self.y, 45, 30)
             if self.walkCount + 1 >= limit:
                 self.walkCount = 0
             else:
@@ -191,40 +198,49 @@ class Aizen:
             if self.idleCount + 1 >= limit:
                 self.idleCount = 0
                 self.action = "final_idle"
-        draw_x = self.hitbox.centerx - sprite.get_width() // 2 - 40
+        draw_x = self.x - sprite.get_width() // 2 - 40
         draw_y = self.hitbox.bottom - sprite.get_height() + 5
+
         win.blit(st.AizenTitle,
                  (st.screen_width//2 - st.AizenTitle.get_width() + 50, 10))
         win.blit(sprite, (draw_x, draw_y))
+        pygame.draw.rect(win, (255, 0, 0), self.hitbox, 2)
         self.health_bar.update(self.health)
         self.health_bar.draw(win)
 
     def move(self, other):
         if self.status != "alive":
             return
-        self.hitbox = pygame.Rect(self.x + 10, self.y, 25, 52)
-        if self.attack_cooldown > 0:
-            self.attack_cooldown -= 1
-        dx = other.x - self.x
-        if abs(dx) > 40 and other.hit_state == "normal":
-            if self.action != "walk":
-                self.interrupt()
-                self.action = "walk"
-            self.facing = 1 if dx > 0 else -1
-            self.x += self.facing * self.vel
-        else:
-            if self.action not in [
-                "idle", "sec_idle", "third_idle", "final_idle",
-                "attack", "jump_attack", "combo_attack",
-                "cero", "teleport", "dash", "hit"
-            ]:
-                self.action = "idle"
-                self.idleCount = 0
-        if self.hitbox.colliderect(other.hitbox) and self.attack_cooldown <= 0:
-            self.interrupt()
-            self.action = "attack"
-            self.attack_cooldown = 30
-        self.draw(st.win)
+        self.action="walk"
+        print(self.x)
+        if self.x>=st.screen_width-self.vel:
+            self.facing=-1
+        elif self.x<=52+self.vel:
+            self.facing=1
+        # self.hitbox = pygame.Rect(self.x + 10, self.y, 25, 52)
+        # if self.attack_cooldown > 0:
+        #     self.attack_cooldown -= 1
+        # dx = other.x - self.x
+        # if abs(dx) > 40 and other.hit_state == "normal":
+        #     if self.action != "walk":
+        #         self.interrupt()
+        #         self.action = "walk"
+        #     self.facing = 1 if dx > 0 else -1
+        self.x += self.facing * self.vel
+        # else:
+        #     if self.action not in [
+        #         "idle", "sec_idle", "third_idle", "final_idle",
+        #         "attack", "jump_attack", "combo_attack",
+        #         "cero", "teleport", "dash", "hit"
+        #     ]:
+        #         self.action = "idle"
+        #         self.idleCount = 0
+        # if self.hitbox.colliderect(other.hitbox) and self.attack_cooldown <= 0:
+        #     self.interrupt()
+        #     self.action = "attack"
+        #     self.attack_cooldown = 30
+
+        self.draw(st.win,other)
 
     def interrupt(self):
         self.attackCount = 0
