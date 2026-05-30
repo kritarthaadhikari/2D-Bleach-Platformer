@@ -2,7 +2,7 @@ import setup as st
 import pygame
 import projectile as pj
 import levels as lv
-
+import time 
 class HealthBar:
     def __init__(self, x, y, width, height, max_hp):
         self.x = x
@@ -55,7 +55,6 @@ class Aizen:
         self.hitCount = 0
         self.status = "alive"
         self.teleportCount = 0
-        self.dashCount = 0
 
         self.attack_cooldown = 0
         self.cero_started = False
@@ -182,15 +181,6 @@ class Aizen:
                 self.hitCount = 0
             else:
                 self.hitCount += 1
-        elif self.action == "dash":
-            animation = st.AizenDashRight if self.facing == 1 else st.AizenDashLeft
-            limit = len(animation) * framesPerImg
-            sprite = animation[self._frame_index(self.dashCount, framesPerImg, animation)]
-
-            if self.dashCount + 1 >= limit:
-                self.dashCount = 0
-            else:
-                self.dashCount += 1
         else:
             animation = st.AizenFinalIdleLeft if self.facing == -1 else st.AizenFinalIdleRight
             limit = len(animation) * framesPerImg
@@ -211,22 +201,29 @@ class Aizen:
     def move(self, other):
         if self.status != "alive":
             return
-        self.action="walk"
-        print(self.x)
-        if self.x>=st.screen_width-self.vel:
-            self.facing=-1
-        elif self.x<=52+self.vel:
-            self.facing=1
+        # self.action="walk"
+        # print(self.x)
+        # if self.x>=st.screen_width-self.vel:
+        #     self.facing=-1
+        # elif self.x<=52+self.vel:
+        #     self.facing=1
         # self.hitbox = pygame.Rect(self.x + 10, self.y, 25, 52)
         # if self.attack_cooldown > 0:
         #     self.attack_cooldown -= 1
-        # dx = other.x - self.x
-        # if abs(dx) > 40 and other.hit_state == "normal":
-        #     if self.action != "walk":
-        #         self.interrupt()
-        #         self.action = "walk"
-        #     self.facing = 1 if dx > 0 else -1
-        self.x += self.facing * self.vel
+        dx = other.x - self.x
+        if abs(dx) > 40 and other.hit_state == "normal" and not self.action=="teleport":
+            if self.action != "walk":
+                self.interrupt()
+                self.action = "walk"
+            self.facing = 1 if dx > 0 else -1
+        if self.action=="walk":
+            self.x += self.facing * self.vel
+        if pygame.time.get_ticks()-st.lastTeleport>=10 and abs(dx)>100:
+            self.action="teleport"
+            st.lastTeleport=pygame.time.get_ticks()
+        if self.teleportCount>=36:
+            self.x=other.x-10
+            
         # else:
         #     if self.action not in [
         #         "idle", "sec_idle", "third_idle", "final_idle",

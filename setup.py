@@ -52,6 +52,9 @@ text_start_time= 0
 current_time=0
 show_text= False
 
+#Aizen
+lastTeleport= pygame.time.get_ticks()
+
 #Bankai Display Parameters
 text_duration_bankai= 2000 #2s
 text_start_time_bankai= 0

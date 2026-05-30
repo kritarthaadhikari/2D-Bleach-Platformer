@@ -89,7 +89,7 @@ def redrawwindow():
     if player.mode=="bankai":
         player.health-=1/30
     hudPannel()
-    # player.draw(st.win, lv.scroll if lv.levelComplete and st.scroll else 0)
+    player.draw(st.win, lv.scroll if lv.levelComplete and st.scroll else 0)
     text= st.font.render(f"Score: {st.score}",1,(255,255,255))
     st.win.blit(text,(st.screen_width-text.get_width()-20, 0))
     for p in pj.projectiles[:]:
@@ -256,6 +256,7 @@ def main():
             createEnemies()
             if player.staminaGauge<100:
                 player.staminaGauge+=1/3*player.incrementalFactor
+            print(player.x,aizen.x,aizen.action,lv.boss)
             for event in events:
                 if event.type ==pygame.MOUSEBUTTONDOWN and st.pause:
                     if restart and restart.collidepoint(event.pos):
