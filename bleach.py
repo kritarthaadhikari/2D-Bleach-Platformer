@@ -141,18 +141,18 @@ def redrawwindow():
         (200,100,255),
         animated=True
     )
-    # if DEBUG:
-    #     fps_surf = st.font.render(f"FPS: {int(clock.get_fps())}", True, (255,255,0))
-    #     st.win.blit(fps_surf, (10, 10))
-    #     try:
-    #         pygame.draw.rect(st.win, (255,0,0), player.hitbox, 1)
-    #         for h in en.hollows:
-    #             pygame.draw.rect(st.win, (0,255,0), h.body_hitbox, 1)
-    #             pygame.draw.rect(st.win, (255,255,0), h.attack_hitbox, 1)
-    #     except Exception:
-    #         pass
-    #     info = f"x:{int(player.x)} action:{player.action} walk:{getattr(player,'walkCount',0)}"
-    #     st.win.blit(st.font.render(info, True, (255,255,255)), (10, 30))
+    if DEBUG:
+        fps_surf = st.font.render(f"FPS: {int(clock.get_fps())}", True, (255,255,0))
+        st.win.blit(fps_surf, (10, 10))
+        try:
+            pygame.draw.rect(st.win, (255,0,0), player.hitbox, 1)
+            for h in en.hollows:
+                pygame.draw.rect(st.win, (0,255,0), h.body_hitbox, 1)
+                pygame.draw.rect(st.win, (255,255,0), h.attack_hitbox, 1)
+        except Exception:
+            pass
+        info = f"x:{int(player.x)} action:{player.action} walk:{getattr(player,'walkCount',0)}"
+        st.win.blit(st.font.render(info, True, (255,255,255)), (10, 30))
     if lv.boss:
        
         aizen.move(player)
@@ -251,7 +251,6 @@ def main():
         while st.game_state=="mainmenu":
             mm.draw()
             mm.handleMenu()
-
         if st.game_state=="start":
             createEnemies()
             if player.staminaGauge<100:

@@ -46,7 +46,7 @@ class Aizen:
         self.max_health = 800
         self.health = 800
         self.dx = 0
-        self.vel = 7
+        self.vel = 5
         self.walkCount = 0
         self.facing = 1
         self.idleCount = 0
@@ -201,7 +201,37 @@ class Aizen:
     def move(self, other):
         if self.status != "alive":
             return
+        self.vel=other.vel
+        if self.x>=st.screen_width-self.vel:
+            self.facing=-1
+        elif self.x<=52+self.vel:
+            self.facing=1
+        self.dx = other.x - self.x
+        # Hysteresis deadzone: only change facing when other is clearly left or right
+        if self.dx > 30:
+            self.facing = 1
+        elif self.dx < -30:
+            self.facing = -1
+        if other.hit_state=="normal":
+            if 200>abs(self.dx)>30:
+                if self.action!= "walk":
+                    self.interrupt()
+                    self.action = "walk"
+            elif pygame.time.get_ticks() - st.lastTeleport >=1000 and abs(self.dx)>=200:
+                self.action = "teleport"
+                st.lastTeleport = pygame.time.get_ticks()
+            elif self.action not in ["idle", "sec_idle", "third_idle", "final_idle"]:
+                self.action = "idle"
+        else:
+            self.action = "idle"
         
+        if self.action=="walk":
+            self.x += self.facing * self.vel
+            self.y=635
+        elif  self.action == "teleport" and self.teleportCount>=36:  # Adjust timing as needed
+            self.x= other.x +10 if self.facing==-1 else other.x+40
+        else:
+            self.y=616
         # else:
         #     if self.action not in [
         #         "idle", "sec_idle", "third_idle", "final_idle",
