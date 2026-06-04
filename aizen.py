@@ -217,10 +217,11 @@ class Aizen:
                 if self.action!= "walk":
                     self.interrupt()
                     self.action = "walk"
-            elif pygame.time.get_ticks() - st.lastTeleport >=1000 and abs(self.dx)>=200:
-                self.action = "teleport"
-                st.lastTeleport = pygame.time.get_ticks()
-            elif self.action not in ["idle", "sec_idle", "third_idle", "final_idle"]:
+            # elif pygame.time.get_ticks() - st.lastTeleport >=1000 and abs(self.dx)>=200:
+            #     self.action = "teleport"
+            #     st.lastTeleport = pygame.time.get_ticks()
+            elif self.action not in ["idle", "sec_idle", "third_idle", "final_idle"
+                                     ,"attack","jump_attack","combo_attack"]:
                 self.action = "idle"
         else:
             self.action = "idle"

@@ -253,6 +253,7 @@ def main():
             mm.handleMenu()
         if st.game_state=="start":
             createEnemies()
+            print(aizen.action)
             if player.staminaGauge<100:
                 player.staminaGauge+=1/3*player.incrementalFactor
             for event in events:
