@@ -201,41 +201,7 @@ class Aizen:
     def move(self, other):
         if self.status != "alive":
             return
-        # self.action="walk"
-        # print(self.x)
-        # if self.x>=st.screen_width-self.vel:
-        #     self.facing=-1
-        # elif self.x<=52+self.vel:
-        #     self.facing=1
-        # self.hitbox = pygame.Rect(self.x + 10, self.y, 25, 52)
-        # if self.attack_cooldown > 0:
-        #     self.attack_cooldown -= 1
-        self.dx = other.x - self.x
-        if abs(self.dx) > 40 and other.hit_state == "normal" and not self.action=="teleport":
-            if self.action != "walk":
-                self.interrupt()
-                self.action = "walk"
-            self.facing = 1 if self.dx > 0 else -1
-        if self.action=="walk":
-            self.x += self.facing * self.vel
-            
-        if self.action in ["walk"]:
-            self.y = 635
-        else:
-            self.y = 616
-        if pygame.time.get_ticks()-st.lastTeleport>=10 and abs(self.dx)>100:
-            self.action="teleport"
-            st.lastTeleport=pygame.time.get_ticks()
-        if self.teleportCount>=36 and self.action=="teleport" and not self.cero_queued:
-            self.x=other.x-10
         
-        if pygame.time.get_ticks()-st.lastCero>=1000 and self.action not in ["cero", "teleport"]:
-            self.cero_queued=True
-            self.cero()
-        if self.cero_queued and not self.cero_started:
-            if self.teleportCount>=36:
-                self.x=other.x-self.dx
-            self.cero()
         # else:
         #     if self.action not in [
         #         "idle", "sec_idle", "third_idle", "final_idle",

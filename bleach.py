@@ -240,7 +240,7 @@ def main():
     st.game_state="mainmenu"
     restart, mainmenu = None, None
     while run:
-        clock.tick(24)
+        clock.tick(30)
         events= pygame.event.get()
         # compute camera offset / screen position early so event handlers can use it
         cam_offset = lv.scroll if (lv.levelComplete and st.scroll) else 0
@@ -256,7 +256,6 @@ def main():
             createEnemies()
             if player.staminaGauge<100:
                 player.staminaGauge+=1/3*player.incrementalFactor
-            print(player.x,aizen.x,aizen.action,lv.boss)
             for event in events:
                 if event.type ==pygame.MOUSEBUTTONDOWN and st.pause:
                     if restart and restart.collidepoint(event.pos):
