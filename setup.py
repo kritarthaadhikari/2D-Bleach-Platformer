@@ -88,7 +88,7 @@ jumpRight = [pygame.image.load(f'images/ichigo/jump{i}.png') for i in range(0,10
 jumpLeft = [pygame.transform.flip(img, True, False) for img in jumpRight]
 dashRight = [pygame.image.load(f'images/ichigo/dash{i}.png') for i in range(1,4)]
 dashLeft = [pygame.transform.flip(img, True, False) for img in dashRight]
-attackRight = [pygame.image.load(f'images/ichigo/nattack{i}.png') for i in range (0,6)]
+attackRight = [pygame.image.load(f'images/ichigo/attack{i}.png') for i in range (1,6)]
 attackLeft = [pygame.transform.flip(img, True, False) for img in attackRight]
 HitRight = [pygame.image.load(f'images/ichigo/hit{i}.png') for i in range(0,10)]
 HitLeft = [pygame.transform.flip(img, True, False) for img in HitRight]
@@ -101,12 +101,7 @@ standUpRight = [pygame.image.load('images/ichigo/stanced1.png'), pygame.image.lo
 standUpLeft = [pygame.transform.flip(img, True, False) for img in standUpRight]
 getsugatenshoRight = [pygame.image.load(f'images/ichigo/getsugatensho{i}.png') for i in range(1,15)]
 getsugatenshoLeft = [pygame.transform.flip(img, True, False) for img in getsugatenshoRight]
-attackFollowUpRight=[pygame.transform.smoothscale(pygame.image.load(f'images/ichigo/niattack1.png'), (64,64)),
-                    pygame.transform.smoothscale(pygame.image.load(f'images/ichigo/niattack2.png'), (69,64)),
-                    pygame.transform.smoothscale(pygame.image.load(f'images/ichigo/niattack3.png'), (64,64)),
-                    pygame.transform.smoothscale(pygame.image.load(f'images/ichigo/niattack4.png'), (72,64)),
-                    pygame.transform.smoothscale(pygame.image.load(f'images/ichigo/niattack5.png'), (47,67)),
-                    pygame.transform.smoothscale(pygame.image.load(f'images/ichigo/niattack6.png'), (58,58))]
+attackFollowUpRight=[pygame.image.load(f'images/ichigo/fattack{i}.png') for i in range(1,7)]
 attackFollowUpLeft= [pygame.transform.flip(img, True, False) for img in attackFollowUpRight]
 shikaiTransformRight= [pygame.image.load(f'images/bankai/shikai{i}.png') for i in range(1,8)]
 shikaiTransformLeft= [pygame.transform.flip(img, True, False) for img in shikaiTransformRight]

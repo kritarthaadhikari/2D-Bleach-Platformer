@@ -299,7 +299,7 @@ class Player:
                         self.action="idle"
 
                 else: #normal attack animation
-                    self.x += self.facing * 0.5
+                    self.x += self.facing * 1
                     limit= len(self.animations[self.mode]["attackRight"])*framesPerImg
                     if self.facing==1:
                         sprite= self.animations[self.mode]["attackRight"][self.attackCount// framesPerImg]
@@ -346,7 +346,7 @@ class Player:
         if not self.mode == "bankai" or (((self.animations['bankai']['stanceRight'][0] and self.facing == 1) and (self.action not in ["attacking", "combo"]))
                                            or ((self.mode == "bankai" and (self.action in ["attacking", "combo"]) and self.facing == -1))):
             if (self.facing == -1) or (self.mode == "bankai"):
-                draw_x = self.x - sprite.get_width() + 50
+                draw_x = self.x-sprite.get_width() + 50
         
         sprite_height = sprite.get_height()
         draw_y = self.feet_y - sprite_height+self.y_offset+50

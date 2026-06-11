@@ -242,7 +242,7 @@ def main():
     st.game_state="mainmenu"
     restart, mainmenu = None, None
     while run:
-        clock.tick(30)
+        clock.tick(20)
         events= pygame.event.get()
         # compute camera offset / screen position early so event handlers can use it
         cam_offset = lv.scroll if (lv.levelComplete and st.scroll) else 0
