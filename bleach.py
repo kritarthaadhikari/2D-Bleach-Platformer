@@ -92,11 +92,11 @@ def redrawwindow():
     player.draw(st.win, lv.scroll if lv.levelComplete and st.scroll else 0)
     text= st.font.render(f"Score: {st.score}",1,(255,255,255))
     st.win.blit(text,(st.screen_width-text.get_width()-20, 0))
+    for p in pj.cero[:]:
+        p.move(aizen)
+        p.draw(st.win, aizen)
     for p in pj.projectiles[:]:
-        if isinstance(p, pj.Cero):
-            p.move()
-            p.draw(st.win)
-        elif player.signatureCount>=21:
+        if player.signatureCount>=21:
             p.move(player)
             p.draw(st.win, lv.scroll if lv.levelComplete and st.scroll else 0, player)
     st.current_time= pygame.time.get_ticks()
@@ -242,7 +242,7 @@ def main():
     st.game_state="mainmenu"
     restart, mainmenu = None, None
     while run:
-        clock.tick(20)
+        clock.tick(30)
         events= pygame.event.get()
         # compute camera offset / screen position early so event handlers can use it
         cam_offset = lv.scroll if (lv.levelComplete and st.scroll) else 0

@@ -1,9 +1,10 @@
 import pygame
+import aizen
 import setup as st
 import player as pl
 
 projectiles = []
-
+cero= []
 class Projectile(pygame.Rect):
     def __init__(self,x,y,width,height,facing):
         super().__init__(x,y,width,height)
@@ -54,15 +55,14 @@ class Projectile(pygame.Rect):
 class Cero(Projectile):
     def __init__(self, x, y, width, height, facing):
         super().__init__(x, y, width, height, facing)
-        self.vel=18
-        self.cero=True
+        self.vel=20
         self.start_x=x
         self.max_distance=650
     
-    def draw(self,win):
+    def draw(self,win,aizen):
         framesPerImg=3
         sprite=None
-        if self.cero:
+        if aizen.cero_started:
             if not st.ceroRight:
                 return
             limit=len(st.ceroRight)*framesPerImg
@@ -73,19 +73,21 @@ class Cero(Projectile):
                 sprite=st.ceroLeft[frame]
             if self.count+1>=limit:
                 self.count=0
-                self.cero=False
+                aizen.cero_started=False
                 self.kill()
             else:
                 self.count+=1
         if sprite:
             win.blit(sprite,(self.x,self.y))
 
-    def move(self):
-        self.x += self.direction * self.vel
-        if abs(self.x - self.start_x) >= self.max_distance:
-            self.kill()
+    def move(self,aizen):
+        if aizen.cero_started:
+            self.x += self.direction * self.vel
+            if abs(self.x - self.start_x) >= self.max_distance:
+                self.kill()
 
     def kill(self):
-        super().kill()
+        if self in cero[:]:
+            cero.remove(self)
 
     

@@ -97,20 +97,27 @@ class Aizen:
                 self.action = "final_idle"
             else:
                 self.idleCount += 1
+        elif self.action=="hold_after_cero":
+            if self.facing==1:
+                animation = st.AizenHoldAfterCeroRight
+            else:
+                animation = st.AizenHoldAfterCeroLeft
+            sprite = animation[0]
         elif self.action == "cero":
             animation = st.AizenCeroRight if self.facing == 1 else st.AizenCeroLeft
-            limit = len(animation) * framesPerImg
-            if not self.cero_started:
+            limit = len(animation) * 5
+            if not self.cero_queued:
                 direction = 1 if self.facing == 1 else -1
-                spawn_x = self.x + (90 if direction == 1 else -10)
+                spawn_x = self.x + (90 if direction == 1 else -100)
                 spawn_y = self.y - 20
-                pj.projectiles.append(pj.Cero(spawn_x, spawn_y, 80, 80, direction))
-                self.cero_started = True
-            sprite = animation[self._frame_index(self.attackCount, framesPerImg, animation)]
+                pj.cero.append(pj.Cero(spawn_x, spawn_y, 80, 80, direction))
+                self.cero_queued = True
+            sprite = animation[self._frame_index(self.attackCount, 5, animation)]
             if self.attackCount + 1 >= limit:
                 self.attackCount = 0
-                self.cero_started = False
-                self.action = "idle"
+                self.cero_queued = False
+                self.cero_started = True
+                self.action = "hold_after_cero"
             else:
                 self.attackCount += 1
         elif self.action == "attack":
@@ -217,15 +224,19 @@ class Aizen:
                 if self.action!= "walk":
                     self.interrupt()
                     self.action = "walk"
+            elif abs(self.dx)>=400:
+                if self.action != "teleport" and pygame.time.get_ticks() - st.lastCero >= 2000:
+                    self.interrupt()
+                    self.action ="cero"
+                    st.lastCero = pygame.time.get_ticks()
             # elif pygame.time.get_ticks() - st.lastTeleport >=1000 and abs(self.dx)>=200:
             #     self.action = "teleport"
             #     st.lastTeleport = pygame.time.get_ticks()
             elif self.action not in ["idle", "sec_idle", "third_idle", "final_idle"
-                                     ,"attack","jump_attack","combo_attack"]:
+                                     ,"attack","jump_attack","combo_attack","cero","teleport"]:
                 self.action = "idle"
         else:
             self.action = "idle"
-        
         if self.action=="walk":
             self.x += self.facing * self.vel
             self.y=635
