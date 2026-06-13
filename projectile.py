@@ -38,6 +38,8 @@ class Projectile(pygame.Rect):
                 self.getsugatenshou=False
                 self.kill()
             self.count+=1 
+        if self.shot!="bankai" and self.getsugatenshou:
+            self.x+=self.direction*5
         win.blit(sprite, (self.x - scroll,self.y))
         #pygame.draw.rect(win, (255,0,0),self,2) for hitbox
 

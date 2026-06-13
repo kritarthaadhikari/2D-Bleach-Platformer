@@ -234,6 +234,11 @@ def enemyDamaged(enemy):
         if player.action=="combo":
             enemy.health-=40*player.incrementalFactor
 
+def hit(player):
+    player.health-=100
+    player.hit_state="got_hit"
+    player.action="hit"
+
 def gameEnded():
     pass
 
@@ -381,11 +386,6 @@ def main():
 
                 # Collisions
                 for p in pj.projectiles[:]:
-                    if isinstance(p, pj.Cero) and p.colliderect(player.hitbox):
-                        player.hit()
-                        player.interrupt()
-                        p.kill()
-                        continue
                     for h in en.hollows:
                         if p.colliderect(h.body_hitbox) and player.signatureCount>=21:
                             if h not in p.hitEnemies:
@@ -395,6 +395,11 @@ def main():
                                 h.blown=True
                                 h.blownCount=0
                 
+                for p in pj.cero[:]:
+                    if p.colliderect(player.hitbox):
+                        hit(player)
+                        player.interrupt()
+                        pj.cero.remove(p)
                 if lv.boss and aizen.status=="alive":
                     if player.hitbox.colliderect(aizen.hitbox) and player.action in ["attacking", "combo"]:
                         if player.attackCount>=9 and player.attackCount<=12:
