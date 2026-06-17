@@ -39,7 +39,7 @@ class Enemy:
                 sprite= st.HwalkRight[self.walkCount//framesPerImg]
             self.walkCount+=1
             if self.walkCount+1>= limit:
-                self.walkCount=0
+                self.walkCount=0 
             if self.facing==1:
                 self.body_hitbox= pygame.Rect(self.x+30, self.feet-100,68, 135 )
             elif self.facing==-1:

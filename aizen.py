@@ -224,7 +224,7 @@ class Aizen:
         elif self.dx < -30:
             self.facing = -1
         if other.hit_state=="normal":
-            if 250>abs(self.dx)>30:
+            if 250>abs(self.dx) and not self.hitbox.colliderect(other.hitbox):
                 if self.action!= "walk":
                     self.interrupt()
                     self.action = "walk"
@@ -238,10 +238,15 @@ class Aizen:
                     self.interrupt()
                     self.action = "teleport"
                     st.lastTeleport = pygame.time.get_ticks()
-
+            elif self.hitbox.colliderect(other.hitbox):
+                self.action = "attack"
+                self.attack_cooldown = 30
             elif self.action not in ["idle", "sec_idle", "third_idle", "final_idle"
                                      ,"attack","jump_attack","combo_attack","cero","teleport"]:
                 self.action = "idle"
+        elif self.hitbox.colliderect(other.hitbox) and other.hit_state!="stationary":
+                self.action = "attack"
+                self.attack_cooldown = 30
         else:
             self.action = "idle"
         if self.action=="walk":
@@ -259,11 +264,6 @@ class Aizen:
         #     ]:
         #         self.action = "idle"
         #         self.idleCount = 0
-        # if self.hitbox.colliderect(other.hitbox) and self.attack_cooldown <= 0:
-        #     self.interrupt()
-        #     self.action = "attack"
-        #     self.attack_cooldown = 30
-        print(self.action)
         self.draw(st.win,other)
 
     def cero(self):

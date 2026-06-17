@@ -383,7 +383,6 @@ def main():
                             player.jump=False
                             player.feet_y=st.feet_y_initial
                             player.air_dash = False
-
                 # Collisions
                 for p in pj.projectiles[:]:
                     for h in en.hollows:
@@ -407,10 +406,10 @@ def main():
                             if aizen.health <= 0:
                                 aizen.status = "dead"
                                 aizen.action = "hit"
-                    if aizen.hitbox.colliderect(player.hitbox) and aizen.action in ["attack", "jump_attack", "combo_attack", "cero"]:
-                        player.hit()
-                        player.interrupt()
-
+                    if aizen.hitbox.colliderect(player.hitbox):
+                        if aizen.action in ["attack", "jump_attack", "combo_attack", "cero"]:
+                            player.aizen_hit()
+        
                 for h in en.hollows[:]:
                     if player.hitbox.colliderect(h.body_hitbox):
                         if h not in player.hollowattack:

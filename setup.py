@@ -100,11 +100,17 @@ standUpRight = [pygame.image.load('images/ichigo/stanced1.png'), pygame.image.lo
                 pygame.image.load('images/ichigo/jump9.png')]
 standUpLeft = [pygame.transform.flip(img, True, False) for img in standUpRight]
 getsugatenshoRight = [pygame.image.load(f'images/ichigo/getsugatensho{i}.png') for i in range(1,15)]
+standUpAutoRight=[pygame.image.load(f'images/ichigo/stanced{i}.png') for i in range(1,4)]
+standUpAutoLeft=[pygame.transform.flip(img, True, False) for img in standUpAutoRight]
 getsugatenshoLeft = [pygame.transform.flip(img, True, False) for img in getsugatenshoRight]
 attackFollowUpRight=[pygame.image.load(f'images/ichigo/fattack{i}.png') for i in range(1,7)]
 attackFollowUpLeft= [pygame.transform.flip(img, True, False) for img in attackFollowUpRight]
 shikaiTransformRight= [pygame.image.load(f'images/bankai/shikai{i}.png') for i in range(1,8)]
 shikaiTransformLeft= [pygame.transform.flip(img, True, False) for img in shikaiTransformRight]
+hitbyAizenRight= [pygame.image.load(f'images/ichigo/hit{i}.png') for i in range(0,3)]
+hitbyAizenLeft= [pygame.transform.flip(img, True, False) for img in hitbyAizenRight]
+hitSteadyRight= [pygame.image.load('images/ichigo/hit2.png')]*10
+hitSteadyLeft= [pygame.transform.flip(img, True, False) for img in hitSteadyRight]
 
 # --- PLAYER BANKAI ASSETS ---
 bankaiWalkRight = [pygame.image.load(f'images/bankai/run{i}.png') for i in range(1, 9)]
@@ -133,6 +139,10 @@ bankaiFollowUpLeft = [pygame.transform.flip(img, True, False) for img in bankaiF
 bankaiTransformRight= [pygame.image.load(f'images/bankai/bankai{i}.png') for i in range(1,9)]
 bankaiTransformLeft = [pygame.transform.flip(img, True, False) for img in bankaiTransformRight]
 getsugatensho= pygame.image.load('images/bankai/getsuga.png')
+bankaihitbyAizenRight= [pygame.image.load(f'images/bankai/hit{i}.png') for i in range(1,4)]
+bankaihitbyAizenLeft=[pygame.transform.flip(img, True, False) for img in bankaihitbyAizenRight]
+bankaihitsteadyRight= [pygame.image.load('images/bankai/hit3.png')]*10
+bankaihitsteadyLeft= [pygame.transform.flip(img,True, False) for img in bankaihitsteadyRight]
 
 #Visored
 VisoredTransformRight= [pygame.image.load(f'images/visored/transform{i}.png') for i in range(1,4)]
