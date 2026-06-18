@@ -41,6 +41,7 @@ class Player:
         self.dashCount = 0 #dash
         self.movement_state = "idle" #left, right, or idle
         self.hollowattack=[] 
+        self.ceroHit=False
         self.damage=200
         self.jump=False
         self.animations= {
@@ -259,6 +260,7 @@ class Player:
                 if self.hitCount+1>=limit:
                     if self.action=="hitbyCero":
                         self.action="idle"
+                        self.ceroHit=False
                     self.hitCount=0
             # elif self.action=="steadyhit" and self.movement_state=="idle":
             #     limit= len(self.animations[self.mode]["steadyhitRight"])*framesPerImg
@@ -413,5 +415,7 @@ class Player:
             self.action="hitbyAizen"
         else:
             self.health-=100
+            self.ceroHit=True
+            self.movement_state="idle"
             self.x-=self.facing*20
         
