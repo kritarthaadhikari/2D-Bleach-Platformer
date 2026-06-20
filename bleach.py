@@ -277,8 +277,8 @@ def main():
                         if event.key==pygame.K_m:
                             st.Mpause=not st.Mpause
                             st.pause_music()
-                        if not event.key==pygame.K_b:
-                            if event.key== pygame.K_SPACE and (player.action not in ["dashing"] and not player.jump):
+                        if not event.key==pygame.K_l:
+                            if event.key== pygame.K_j and (player.action not in ["dashing"] and not player.jump):
                                 if player.action not in ["attacking", "combo"]:
                                     player.action="attacking"
                                     player.stance_state="initial"
@@ -302,7 +302,7 @@ def main():
                                         player.dashCount = 0
                                         player.staminaGauge -= 20
 
-                            elif event.key== pygame.K_z:
+                            elif event.key== pygame.K_k:
                                 if st.killCount!=0 and player.staminaGauge>=90 and not player.jump:
                                     player.interrupt()
                                     player.action="signature"
@@ -321,7 +321,7 @@ def main():
                                     st.show_text= True
                                     st.text_start_time= pygame.time.get_ticks()
                                     redrawwindow()
-                        elif event.key==pygame.K_b:
+                        elif event.key==pygame.K_l:
                             if player.mode=="shikai" and player.ultimateGauge>=160:
                                 player.activateDeactivateBankai()
                             elif player.mode=="bankai":
@@ -351,12 +351,12 @@ def main():
                             if player.x < min_world_x:
                                 player.x = min_world_x
 
-                            if (keys[pygame.K_LEFT] or keys[pygame.K_a]) and screen_x > player.vel:
+                            if ( keys[pygame.K_a]) and screen_x > player.vel:
                                 player.x -= player.vel
                                 player.movement_state = "left"
                                 player.facing= -1
                                 player.action="knockeddown" if player.hit_state in ["got_hit", "stationary"] else player.action
-                            elif (keys[pygame.K_RIGHT] or keys[pygame.K_d]) and (screen_x + player.width + player.vel < st.screen_width or (lv.levelComplete and st.scroll)):
+                            elif ( keys[pygame.K_d]) and (screen_x + player.width + player.vel < st.screen_width or (lv.levelComplete and st.scroll)):
                                 player.x += player.vel
                                 player.movement_state = "right"
                                 player.facing= 1
@@ -370,7 +370,7 @@ def main():
 
                         # Jump logic
                         if not player.jump:
-                            if keys[pygame.K_UP] or keys[pygame.K_w] :
+                            if keys[pygame.K_w] :
                                 player.jump=True
                                 player.interrupt()
                         else:

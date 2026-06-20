@@ -107,13 +107,6 @@ class Player:
                 "hitbyAizenLeft" : st.bankaihitbyAizenLeft,
                 "steadyhitRight" :st.bankaihitsteadyRight,
                 "steadyhitLeft" :st.bankaihitsteadyLeft
-            },
-            "visored" :{
-                "transformRight": st.VisoredTransformRight,
-                "transformLeft": st.VisoredTransformLeft,
-                "transformBackRight": st.VisoredToBankaiRight,
-                "transformBackLeft": st.VisoredToBankaiLeft
-                
             }
         }
 
@@ -126,14 +119,14 @@ class Player:
             self.transform_state="activating"
             self.ultimateGauge=160
             st.bankaiSound.play(0)
+        # elif self.mode=="bankai":
+        #     self.mode= "visored"
+        #     self.vel=11
+        #     self.damage=750
+        #     self.incrementalFactor=4
+        #     self.transform_state="activating"
+        #     self.ultimateGauge=0
         elif self.mode=="bankai":
-            self.mode= "visored"
-            self.vel=11
-            self.damage=750
-            self.incrementalFactor=4
-            self.transform_state="activating"
-            self.ultimateGauge=0
-        else:
             self.mode= "shikai"
             self.vel=5
             self.damage=200
