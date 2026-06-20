@@ -43,8 +43,8 @@ class Aizen:
         self.y = y
         self.hitbox = pygame.Rect(self.x+10, self.y-4, 10, st.AizenTitle.get_height()+20)
         self.hitbox_x=self.x+10
-        self.max_health = 800
-        self.health = 800
+        self.max_health = 1000
+        self.health = 1000
         self.dx = 0
         self.vel = 5
         self.walkCount = 0
@@ -54,6 +54,7 @@ class Aizen:
         self.attackCount = 0
         self.hitCount = 0
         self.status = "alive"
+        self.gothit=False
         self.teleportCount = 0
         self.cero_queued=False
         self.attack_cooldown = 0
@@ -95,6 +96,14 @@ class Aizen:
             if self.idleCount + 1 >= limit:
                 self.idleCount = 0
                 self.action = "final_idle"
+            else:
+                self.idleCount += 1
+        elif self.action == "final_idle":
+            animation = st.AizenFinalIdleLeft if self.facing == -1 else st.AizenFinalIdleRight
+            limit = len(animation) * framesPerImg
+            sprite = animation[self._frame_index(self.idleCount, framesPerImg, animation)]
+            if self.idleCount + 1 >= limit:
+                self.idleCount = 0
             else:
                 self.idleCount += 1
         elif self.action=="hold_after_cero":
@@ -150,7 +159,9 @@ class Aizen:
                 self.attackCount += 1
         elif self.action == "combo_attack":
             if other.x-self.x>0:
-                self.facing==1
+                self.facing = 1
+            else:
+                self.facing = -1
             animation = st.AizensecondAttackRight if self.facing == 1 else st.AizensecondAttackLeft
             limit = len(animation) * framesPerImg
             self.x += self.facing * 5
@@ -169,6 +180,7 @@ class Aizen:
             animation = st.AizenTeleportRight if self.facing == 1 else st.AizenTeleportLeft
             limit = len(animation) * framesPerImg
             sprite = animation[self._frame_index(self.teleportCount, framesPerImg, animation)]
+            self.hitbox = pygame.Rect(self.x-50, self.y, 25, 52)
             if self.teleportCount + 1 >= limit:
                 self.teleportCount = 0
                 self.action = "idle"
@@ -199,6 +211,8 @@ class Aizen:
             if self.idleCount + 1 >= limit:
                 self.idleCount = 0
                 self.action = "final_idle"
+            else:
+                self.idleCount += 1
         draw_x = self.x - sprite.get_width() // 2 - 40
         draw_y = self.hitbox.bottom - sprite.get_height() + 5
 
@@ -224,11 +238,11 @@ class Aizen:
         elif self.dx < -30:
             self.facing = -1
         if other.hit_state=="normal":
-            if 250>abs(self.dx) and not self.hitbox.colliderect(other.hitbox):
+            if 250>abs(self.dx) and not self.hitbox.colliderect(other.hitbox) and not self.gothit:
                 if self.action!= "walk":
                     self.interrupt()
                     self.action = "walk"
-            elif abs(self.dx)>=250:
+            elif abs(self.dx)>=250 or self.gothit:
                 if self.action!="teleport" and pygame.time.get_ticks() - st.lastCero >= 5000:
                     self.interrupt()
                     self.action ="cero"
@@ -238,24 +252,38 @@ class Aizen:
                     self.interrupt()
                     self.action = "teleport"
                     st.lastTeleport = pygame.time.get_ticks()
-            elif self.hitbox.colliderect(other.hitbox) and self.action!="hit":
-                self.action = "attack"
-                self.attack_cooldown = 30
+            # elif self.hitbox.colliderect(other.hitbox) and not self.gothit:
+            #     self.action = "attack"
+            #     self.attack_cooldown = 30
             elif self.action not in ["idle", "sec_idle", "third_idle", "final_idle"
-                                     ,"attack","jump_attack","combo_attack","cero","teleport"]:
+                                     ,"attack","jump_attack","combo_attack","cero","teleport","hit"]:
                 self.action = "idle"
-        elif self.hitbox.colliderect(other.hitbox) and self.action!="hit":
-                self.action = "attack"
-                self.attack_cooldown = 30
+    
+        # elif self.hitbox.colliderect(other.hitbox) and self.action!="hit":
+        #         self.action = "attack"
+        #         self.attack_cooldown = 30
         else:
             self.action = "idle"
+    
         if self.action=="walk":
             self.x += self.facing * self.vel
             self.y=635
-        elif  self.action == "teleport" and self.teleportCount>=36:  # Adjust timing as needed
-            self.x= other.x +10 if self.facing==-1 else other.x+40
+        elif self.action == "teleport":
+            self.y=616
+            if self.teleportCount>=36:  # Adjust timing as needed
+                if not self.gothit:
+                    self.x= other.x +10 if self.facing==-1 else other.x+40
+                else:
+                    print(True)
+                    self.x=1000 if st.screen_width//2- other.x>0 else 100
         else:
             self.y=616
+            self.gothit=False
+
+        if self.action == "walk":
+            self.hitbox = pygame.Rect(self.x-60, self.y, 45, 30)
+        elif self.action in ["idle", "sec_idle", "third_idle", "final_idle", "hold_after_cero", "cero", "attack", "jump_attack", "combo_attack", "teleport", "hit"]:
+            self.hitbox = pygame.Rect(self.x-50, self.y, 25, 52)
         # else:
         #     if self.action not in [
         #         "idle", "sec_idle", "third_idle", "final_idle",
@@ -284,15 +312,18 @@ class Aizen:
     def interrupt(self):
         self.attackCount = 0
         self.idleCount = 0
+        self.teleportCount=0
         self.walkCount = 0
-        self.teleportCount = 0
         self.dashCount = 0
         self.cero_started = False
         self.y = 616
 
-    def hit(self, amount=20):
+    def hit(self, amount=10):
         self.health -= amount
         self.health = max(0, self.health)
         self.health_bar.update(self.health)
-        self.action = "hit"
-        self.interrupt()
+        self.gothit=True
+        if self.action not in ["cero","teleport"]:
+            self.action = "hit"
+            self.interrupt()
+    

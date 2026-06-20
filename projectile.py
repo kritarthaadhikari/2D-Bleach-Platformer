@@ -65,14 +65,12 @@ class Cero(Projectile):
         framesPerImg=3
         sprite=None
         if aizen.cero_started:
-            if not st.ceroRight:
+            frames = st.ceroRight if self.direction == 1 else st.ceroLeft
+            if not frames:
                 return
-            limit=len(st.ceroRight)*framesPerImg
-            frame = min(self.count // framesPerImg, len(st.ceroRight)-1)
-            if self.direction==1:
-                sprite=st.ceroRight[frame]
-            else:
-                sprite=st.ceroLeft[frame]
+            limit=len(frames)*framesPerImg
+            frame = min(self.count // framesPerImg, len(frames)-1)
+            sprite=frames[frame]
             if self.count+1>=limit:
                 self.count=0
                 aizen.cero_started=False
@@ -86,6 +84,8 @@ class Cero(Projectile):
         if aizen.cero_started:
             self.x += self.direction * self.vel
             if abs(self.x - self.start_x) >= self.max_distance:
+                self.kill()
+            if self.x > st.screen_width + 200 or  self.x < 0:
                 self.kill()
 
     def kill(self):

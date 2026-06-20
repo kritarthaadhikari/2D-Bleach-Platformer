@@ -387,16 +387,25 @@ def main():
                                 player.air_dash = False
                 # Collisions
                 for p in pj.projectiles[:]:
-                    for h in en.hollows:
-                        if p.colliderect(h.body_hitbox) and player.signatureCount>=21:
-                            if h not in p.hitEnemies:
-                                h.health-=player.damage
-                                p.hitEnemies.append(h)
-                                h.facing=-1*player.facing
-                                if h.state in ["attacking","hit"]:
-                                    h.state="idle"
-                                h.blown=True
-                                h.blownCount=0
+                    if player.signatureCount>=21:
+                        if aizen.status=="alive" and lv.boss:
+                            if p.colliderect(aizen.hitbox):
+                                if aizen not in p.hitEnemies:
+                                    aizen.hit(player.damage)
+                                    p.hitEnemies.append(aizen) 
+                                    if aizen.health <= 0:
+                                        aizen.status = "dead"
+                                        aizen.action = "hit"
+                        for h in en.hollows:
+                            if p.colliderect(h.body_hitbox):
+                                if h not in p.hitEnemies:
+                                    h.health-=player.damage
+                                    p.hitEnemies.append(h)
+                                    h.facing=-1*player.facing
+                                    if h.state in ["attacking","hit"]:
+                                        h.state="idle"
+                                    h.blown=True
+                                    h.blownCount=0
                 
                 for p in pj.cero[:]:
                     if p.colliderect(player.hitbox):
@@ -406,12 +415,12 @@ def main():
                 if lv.boss and aizen.status=="alive":
                     if player.attackhitbox.colliderect(aizen.hitbox) and player.action in ["attacking", "combo"]:
                         if player.attackCount>=9 and player.attackCount<=12:
-                            aizen.hit(20 * player.incrementalFactor)
+                            aizen.hit(10 * player.incrementalFactor)
                             if aizen.health <= 0:
                                 aizen.status = "dead"
                                 aizen.action = "hit"
                     if aizen.hitbox.colliderect(player.hitbox):
-                        if aizen.action in ["attack", "jump_attack", "combo_attack", "cero"]:
+                        if aizen.action in ["attack", "jump_attack", "combo_attack"]:
                             player.aizen_hit()
         
                 for h in en.hollows[:]:
