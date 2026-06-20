@@ -88,6 +88,7 @@ def redrawwindow():
         lv.sideScrolling(player)
     if player.mode=="bankai":
         player.health-=1/30
+        player.ultimateGauge-=1/30
     hudPannel()
     player.draw(st.win, lv.scroll if lv.levelComplete and st.scroll else 0)
     text= st.font.render(f"Score: {st.score}",1,(255,255,255))
@@ -108,7 +109,7 @@ def redrawwindow():
             st.show_text= False
     st.current_time_bankai= pygame.time.get_ticks()
     if st.current_time_bankai-st.text_start_time_bankai<=st.text_duration_bankai:
-        if player.ultimateGauge>=160:
+        if player.ultimateGauge>=80:
             text= st.font.render("Ultimate Ready!",1,(255,255,255))
             st.win.blit(text,(st.screen_width//2-text.get_width()//2, st.screen_height//2-text.get_height()//2))
     if st.Mpause:
@@ -155,7 +156,6 @@ def redrawwindow():
         info = f"x:{int(player.x)} action:{player.action} walk:{getattr(player,'walkCount',0)}"
         st.win.blit(st.font.render(info, True, (255,255,255)), (10, 30))
     if lv.boss:
-       
         aizen.move(player)
     pygame.display.update()   
 
@@ -322,7 +322,7 @@ def main():
                                     st.text_start_time= pygame.time.get_ticks()
                                     redrawwindow()
                         elif event.key==pygame.K_l:
-                            if player.mode=="shikai" and player.ultimateGauge>=160:
+                            if player.mode=="shikai" and player.ultimateGauge>=80:
                                 player.activateDeactivateBankai()
                             elif player.mode=="bankai":
                                 player.activateDeactivateBankai()
@@ -392,6 +392,9 @@ def main():
                             if p.colliderect(aizen.hitbox):
                                 if aizen not in p.hitEnemies:
                                     aizen.hit(player.damage)
+                                    if player.ultimateGauge<160:
+                                        player.ultimateGauge+=10
+                                        player.ultimateGauge=min(player.ultimateGauge, 160)
                                     p.hitEnemies.append(aizen) 
                                     if aizen.health <= 0:
                                         aizen.status = "dead"
@@ -404,6 +407,9 @@ def main():
                                     h.facing=-1*player.facing
                                     if h.state in ["attacking","hit"]:
                                         h.state="idle"
+                                    if player.ultimateGauge<160:
+                                        player.ultimateGauge+=5
+                                        player.ultimateGauge=min(player.ultimateGauge, 160)
                                     h.blown=True
                                     h.blownCount=0
                 
@@ -416,6 +422,7 @@ def main():
                     if player.attackhitbox.colliderect(aizen.hitbox) and player.action in ["attacking", "combo"]:
                         if player.attackCount>=9 and player.attackCount<=12:
                             aizen.hit(10 * player.incrementalFactor)
+                            player.ultimateGauge+=5
                             if aizen.health <= 0:
                                 aizen.status = "dead"
                                 aizen.action = "hit"

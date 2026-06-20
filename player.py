@@ -117,7 +117,7 @@ class Player:
             self.damage=500
             self.incrementalFactor=2
             self.transform_state="activating"
-            self.ultimateGauge=160
+            self.ultimateGauge-=80
             st.bankaiSound.play(0)
         # elif self.mode=="bankai":
         #     self.mode= "visored"

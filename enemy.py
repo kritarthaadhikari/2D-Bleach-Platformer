@@ -147,6 +147,9 @@ class Enemy:
     
     def gothit(self,other):
         self.health-=20*other.incrementalFactor
+        if other.ultimateGauge<160:
+            other.ultimateGauge+=1/2
+            other.ultimateGauge=min(other.ultimateGauge, 160)
         if self.state=="idle":
             self.state="hit"
             self.hitCount=0
@@ -159,5 +162,6 @@ class Enemy:
             st.killCountperRound+=1
             if other.ultimateGauge<160:
                 other.ultimateGauge+=40
+                other.ultimateGauge=min(other.ultimateGauge, 160)
 
 #Issue: Enemy movement and not attacking when player is in range
