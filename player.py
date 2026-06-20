@@ -382,8 +382,8 @@ class Player:
                 if self.walkCount +1 >= limit:
                     self.walkCount = 0
 
-        self.hitbox= pygame.Rect(self.x+10, self.feet_y-4,50, 52 )
-        
+        self.hitbox= pygame.Rect(self.x+10, self.feet_y-4,35, 52 )
+        pygame.draw.rect(st.win, (0,0,255),self.hitbox,2)
         draw_x = self.x
         if not self.mode == "bankai" or (((self.animations['bankai']['stanceRight'][0] and self.facing == 1) and (self.action not in ["attacking", "combo"]))
                                            or ((self.mode == "bankai" and (self.action in ["attacking", "combo"]) and self.facing == -1))):
@@ -412,7 +412,7 @@ class Player:
 
     def aizen_hit(self):
         if not self.action=="hitbyCero":
-            self.health-=1
+            self.health-=3
             self.action="hitbyAizen"
         else:
             self.health-=100

@@ -60,35 +60,38 @@ class Cero(Projectile):
         self.vel=30
         self.start_x=x
         self.max_distance=650
+        self.active=False
     
     def draw(self,win,aizen):
         framesPerImg=3
         sprite=None
-        if aizen.cero_started:
-            frames = st.ceroRight if self.direction == 1 else st.ceroLeft
-            if not frames:
-                return
-            limit=len(frames)*framesPerImg
-            frame = min(self.count // framesPerImg, len(frames)-1)
-            sprite=frames[frame]
-            if self.count+1>=limit:
-                self.count=0
-                aizen.cero_started=False
-                self.kill()
-            else:
-                self.count+=1
+        if not self.active:
+            return
+        frames = st.ceroRight if self.direction == 1 else st.ceroLeft
+        if not frames:
+            return
+        limit=len(frames)*framesPerImg
+        frame = min(self.count // framesPerImg, len(frames)-1)
+        sprite=frames[frame]
+        if self.count+1>=limit:
+            self.count=0
+            self.kill()
+        else:
+            self.count+=1
         if sprite:
             win.blit(sprite,(self.x,self.y))
 
     def move(self,aizen):
-        if aizen.cero_started:
-            self.x += self.direction * self.vel
-            if abs(self.x - self.start_x) >= self.max_distance:
-                self.kill()
-            if self.x > st.screen_width + 200 or  self.x < 0:
-                self.kill()
+        if not self.active:
+            return
+        self.x += self.direction * self.vel
+        if abs(self.x - self.start_x) >= self.max_distance:
+            self.kill()
+        if self.x > st.screen_width + 200 or  self.x < 0:
+            self.kill()
 
     def kill(self):
+        self.active=False
         if self in cero[:]:
             cero.remove(self)
 

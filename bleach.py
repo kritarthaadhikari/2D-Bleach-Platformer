@@ -429,7 +429,7 @@ def main():
                             player.hollowattack.append(h)
                         if h.state in ["idle"] :
                             h.state="attacking"
-                        if player.attackhitbox.colliderect(h.attack_hitbox):
+                        if player.hitbox.colliderect(h.attack_hitbox):
                             if 21 <=h.attackCount <24 or h.state=="hit":
                                 player.hit()
                             if player.attackCount>=9 and player.attackCount<=12 and (player.action in ["attacking", "combo"]):
