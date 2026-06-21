@@ -260,6 +260,12 @@ def main():
         while st.game_state=="mainmenu":
             mm.draw()
             mm.handleMenu()
+        if st.game_state=="instructions":
+            mm.instructions()
+            for event in events:
+                if event.type== pygame.KEYDOWN:
+                    if event.key== pygame.K_ESCAPE:
+                        st.game_state="mainmenu"
         if st.game_state=="start":
             createEnemies()
             if player.staminaGauge<100:

@@ -11,6 +11,7 @@ surface =pygame.Surface((screen_width,screen_height),pygame.SRCALPHA)
 ground= pygame.transform.smoothscale(pygame.image.load('images/setup/ground.png').convert_alpha(), (screen_width, 100))
 #“This surface will use RGBA 
 # (Red, Green, Blue, Alpha) instead of just RGB."
+instructions= pygame.transform.smoothscale(pygame.image.load(f'images/setup/controls.png').convert_alpha(),(700, screen_height))
 
 pygame.mixer.music.load('audio/on the precipice of death.mp3')
 pygame.mixer.music.set_volume(0.4)
