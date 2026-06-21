@@ -88,7 +88,8 @@ def redrawwindow():
         lv.sideScrolling(player)
     if player.mode=="bankai":
         player.health-=1/30
-        player.ultimateGauge-=1/30
+        if player.ultimateGauge>0:
+            player.ultimateGauge-=1/30
     hudPannel()
     player.draw(st.win, lv.scroll if lv.levelComplete and st.scroll else 0)
     text= st.font.render(f"Score: {st.score}",1,(255,255,255))
@@ -155,7 +156,7 @@ def redrawwindow():
             pass
         info = f"x:{int(player.x)} action:{player.action} walk:{getattr(player,'walkCount',0)}"
         st.win.blit(st.font.render(info, True, (255,255,255)), (10, 30))
-    if lv.boss:
+    if lv.boss and not st.scroll:
         aizen.move(player)
     pygame.display.update()   
 
