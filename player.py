@@ -193,6 +193,7 @@ class Player:
                     self.feet_y-=2
                 else:
                     self.feet_y=st.feet_y_initial
+                self.hitbox= pygame.Rect(self.x+10, self.feet_y-4,60, 52 )
                 if self.visoredCount+1>=limit:
                     self.visoredCount=0
                     self.action="idle"
@@ -274,12 +275,14 @@ class Player:
                     sprite= self.animations[self.mode]["hitbyAizenRight"][self.hitCount//framesPerImg]
                 else:
                     sprite= self.animations[self.mode]["hitbyAizenLeft"][self.hitCount//framesPerImg]
-                self.hitCount+=1
+                
                 if self.hitCount+1>=limit:
                     if self.action=="hitbyCero":
                         self.action="idle"
                         self.ceroHit=False
                     self.hitCount=0
+                else:
+                    self.hitCount+=1
             elif self.jump: #jump animation
                 if self.air_dash:
                     if self.facing==1:
@@ -392,6 +395,7 @@ class Player:
 
         self.hitbox= pygame.Rect(self.x+10, self.feet_y-4,35, 52 )
         pygame.draw.rect(st.win, (0,0,255),self.hitbox,2)
+        pygame.draw.rect(st.win,(0,255,0),self.attackhitbox,2)
         draw_x = self.x
         if not self.mode == "bankai" or (((self.animations['bankai']['stanceRight'][0] and self.facing == 1) and (self.action not in ["attacking", "combo"]))
                                            or ((self.mode == "bankai" and (self.action in ["attacking", "combo"]) and self.facing == -1))):

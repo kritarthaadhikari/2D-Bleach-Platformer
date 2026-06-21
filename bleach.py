@@ -441,7 +441,7 @@ def main():
                     if lv.boss and aizen.status=="alive":
                         if player.attackhitbox.colliderect(aizen.hitbox) and player.action in ["attacking", "combo"]:
                             if player.attackCount>=9 and player.attackCount<=12:
-                                aizen.hit(10 * player.incrementalFactor)
+                                aizen.hit(2 * player.incrementalFactor)
                                 player.ultimateGauge+=5
                                 if aizen.health <= 0:
                                     aizen.status = "dead"
@@ -468,7 +468,12 @@ def main():
                                 if h.state not in ["falling", "dead"]:
                                     h.state="idle"
                                 player.hit_state= "normal"
-                    
+                elif player.hitbox.colliderect(aizen.hitbox) and player.action in ["visored"]:
+                    player.jump=False
+                    if player.visoredCount>=20 and player.visoredCount<=35:
+                        aizen.hit(20*player.incrementalFactor)
+                        player.ultimateGauge+=5
+                        aizen.action="hit"
                 if player.health<=0:
                     st.game_state="gameover"
                 redrawwindow()

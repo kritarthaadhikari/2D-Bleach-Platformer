@@ -231,7 +231,6 @@ class Aizen:
         self.health_bar.draw(win)
 
     def move(self, other):
-        print(self.action)
         if self.status != "alive":
             return
         self.vel=other.vel
@@ -248,7 +247,7 @@ class Aizen:
             self.facing = 1
         elif not attack_chain and self.dx < -40:
             self.facing = -1       
-        print(f"Aizen {self.x}, Ichigo {other.x} and {self.dx}")   
+        # print(f"Aizen {self.x}, Ichigo {other.x} and {self.dx}")   
         if other.hit_state=="normal":
             if 250>abs(self.dx) and not self.hitbox.colliderect(other.hitbox) and not self.gothit:
                 if self.action!= "walk":
