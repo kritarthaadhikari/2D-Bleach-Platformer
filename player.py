@@ -30,7 +30,7 @@ class Player:
         self.signatureCount = 0
         self.steadyCount=0 #steadyhit
         self.staminaGauge = 100
-        self.ultimateGauge = 160
+        self.ultimateGauge = 0
         self.comboTimer=0 #Time allowed for followup attack window
         self.combo_state= "none" 
         self.mode= "shikai" #shikai or bankai mode
@@ -394,8 +394,6 @@ class Player:
                     self.walkCount = 0
 
         self.hitbox= pygame.Rect(self.x+10, self.feet_y-4,35, 52 )
-        # pygame.draw.rect(st.win, (0,0,255),self.hitbox,2)
-        # pygame.draw.rect(st.win,(0,255,0),self.attackhitbox,2)
         draw_x = self.x
         if not self.mode == "bankai" or (((self.animations['bankai']['stanceRight'][0] and self.facing == 1) and (self.action not in ["attacking", "combo"]))
                                            or ((self.mode == "bankai" and (self.action in ["attacking", "combo"]) and self.facing == -1))):

@@ -41,19 +41,25 @@ class EndingSequence:
             if self.fade_alpha >= 255:
                 self.phase = "revert"
                 self.timer = 0
-                # revert ichigo to base form (matches Player.activateDeactivateBankai's shikai branch)
+                # revert ichigo to base form using the player's own deactivation
+                # logic, so this stays in sync with however bankai is unwound
+                # elsewhere (vel/damage/incrementalFactor/counters/etc).
                 if ichigo.mode == "bankai":
-                    ichigo.mode = "shikai"
-                    ichigo.vel = 5
-                    ichigo.damage = 200
-                    ichigo.incrementalFactor = 1
+                    ichigo.activateDeactivateBankai()
+                ichigo.transform_state = "inactive"
                 ichigo.action = "idle"
+                ichigo.movement_state = "idle"
+                # fade back in from black so the base-form idle stance reads
+                self.fade_alpha = 255
 
         elif self.phase == "revert":
-            if self.timer > 20:
+            self.ichigo = ichigo
+            # fade the black screen back out to reveal Ichigo idling in base form
+            self.fade_alpha = max(0, self.fade_alpha - 7)
+            if self.fade_alpha <= 0 and self.timer > 60:
                 self.phase = "dialogue"
                 self.timer = 0
-                self.fade_alpha = 255  # stay black behind dialogue
+                self.fade_alpha = 255  # fade to black again behind dialogue
 
         elif self.phase == "dialogue":
             self.dialogue_char_timer += 1
@@ -88,7 +94,15 @@ class EndingSequence:
             self._draw_defeat(win)
 
     def _draw_victory(self, win):
-        if self.phase in ("fade_out", "revert"):
+        if self.phase == "revert":
+            win.blit(st.bg, (0, 0))
+            win.blit(st.ground, (0, st.feet_y_initial))
+            if hasattr(self, "ichigo"):
+                self.ichigo.draw(win)
+            self.fade_surface.set_alpha(self.fade_alpha)
+            win.blit(self.fade_surface, (0, 0))
+
+        elif self.phase == "fade_out":
             self.fade_surface.set_alpha(self.fade_alpha)
             win.blit(self.fade_surface, (0, 0))
 

@@ -55,14 +55,12 @@ class Aizen:
         self.hitCount = 0
         self.status = "alive"
         self.gothit=False
-        self.gothitCount=0
         self.teleportCount = 0
         self.cero_queued=False
         self.cero_projectile = None
         self.attack_cooldown = 0
         self.cero_started = False
         self.attack_damage = 15
-        self.can_escape_teleport=False
         self.attack_facing = None
         self.health_bar = HealthBar(
             x=st.screen_width//2 - 200,
@@ -227,7 +225,6 @@ class Aizen:
         win.blit(st.AizenTitle,
                  (st.screen_width//2 - st.AizenTitle.get_width() + 50, 10))
         win.blit(sprite, (draw_x, draw_y))
-        pygame.draw.rect(win, (255, 0, 0), self.hitbox, 2)
         self.health_bar.update(self.health)
         self.health_bar.draw(win)
 
@@ -235,76 +232,77 @@ class Aizen:
         if self.status != "alive":
             return
         self.vel=other.vel
-        attack_chain = self.action in ["attack", "jump_attack", "combo_attack"]
-        if attack_chain and self.attack_facing is not None:
-            self.facing = self.attack_facing
-        if self.x>=st.screen_width-self.vel:
-            self.facing=-1
-        elif self.x<=52+self.vel:
-            self.facing=1
-        self.dx = other.x - self.x
-        # Hysteresis deadzone: only change facing when other is clearly left or right
-        if not attack_chain and self.dx > 20:
-            self.facing = 1
-        elif not attack_chain and self.dx < -40:
-            self.facing = -1       
-        # print(f"Aizen {self.x}, Ichigo {other.x} and {self.dx}")   
-        if other.hit_state=="normal":
-            if 250>abs(self.dx) and not self.hitbox.colliderect(other.hitbox) and not self.gothit:
-                if self.action!= "walk":
-                    self.interrupt()
-                    self.action = "walk"
-            elif abs(self.dx)>=250 or self.gothit:
-                if self.action!="teleport" and pygame.time.get_ticks() - st.lastCero >= 5000 and not self.gothit:
-                    self.interrupt()
-                    self.action ="cero"
-                    print("Cero started")
-                    st.lastCero = pygame.time.get_ticks()
-                elif (pygame.time.get_ticks() - st.lastTeleport >= 1000  or self.can_escape_teleport) and self.action not in ["teleport","cero","hold_after_cero"]:
-                    self.interrupt()
-                    self.action = "teleport"
-                    st.lastTeleport = pygame.time.get_ticks()
-            elif self.hitbox.colliderect(other.hitbox) and not self.gothit and self.action not in ["attack","jump_attack","combo_attack"]:
-                self.action = "attack"
-                self.attack_facing = self.facing
-                self.attack_cooldown = 30
-            elif self.action not in ["idle", "sec_idle", "third_idle", "final_idle"
-                                     ,"attack","jump_attack","combo_attack","cero","teleport","hit"]:
+        if other.transform_state!="activating":
+            attack_chain = self.action in ["attack", "jump_attack", "combo_attack"]
+            if attack_chain and self.attack_facing is not None:
+                self.facing = self.attack_facing
+            if self.x>=st.screen_width-self.vel:
+                self.facing=-1
+            elif self.x<=52+self.vel:
+                self.facing=1
+            self.dx = other.x - self.x
+            # Hysteresis deadzone: only change facing when other is clearly left or right
+            if not attack_chain and self.dx > 20:
+                self.facing = 1
+            elif not attack_chain and self.dx < -40:
+                self.facing = -1          
+            if other.hit_state=="normal":
+                if 250>abs(self.dx) and not self.hitbox.colliderect(other.hitbox) and not self.gothit:
+                    if self.action!= "walk":
+                        self.interrupt()
+                        self.action = "walk"
+                elif abs(self.dx)>=250 or self.gothit:
+                    if self.action!="teleport" and pygame.time.get_ticks() - st.lastCero >= 5000 and not self.gothit:
+                        self.interrupt()
+                        self.action ="cero"
+                        st.lastCero = pygame.time.get_ticks()
+                    elif (pygame.time.get_ticks() - st.lastTeleport >= 1000 ) and self.action not in ["teleport","cero","hold_after_cero"]:
+                        self.interrupt()
+                        self.action = "teleport"
+                        st.lastTeleport = pygame.time.get_ticks()
+                elif self.hitbox.colliderect(other.hitbox) and not self.gothit and self.action not in ["attack","jump_attack","combo_attack"]:
+                    self.action = "attack"
+                    self.attack_facing = self.facing
+                    self.attack_cooldown = 30
+                elif self.action not in ["idle", "sec_idle", "third_idle", "final_idle"
+                                        ,"attack","jump_attack","combo_attack","cero","teleport","hit"]:
+                    self.action = "idle"
+            elif self.hitbox.colliderect(other.hitbox) and self.action!="hit" and self.action not in ["attack","jump_attack","combo_attack"]:
+                    self.action = "attack"
+                    self.attack_facing = self.facing
+            else:
                 self.action = "idle"
-        elif self.hitbox.colliderect(other.hitbox) and self.action!="hit" and self.action not in ["attack","jump_attack","combo_attack"]:
-                self.action = "attack"
-                self.attack_facing = self.facing
-        else:
-            self.action = "idle"
-    
-        if self.action=="walk":
-            self.x += self.facing * self.vel
-            self.y=635
-        elif self.action == "teleport":
-            self.y=616
-            if self.teleportCount==36:  # Adjust timing as needed
-                if not self.gothit:
-                    self.x= other.x +10 if self.facing==-1 else other.x+40
-                else:
-                    print("1")
-                    self.x=1000 if st.screen_width//2- other.x>0 else 100
-                    self.gothit=False
-        else:
-            self.y=616
-            self.gothit=False
+        
+            if self.action=="walk":
+                self.x += self.facing * self.vel
+                self.y=635
+            elif self.action == "teleport":
+                self.y=616
+                if self.teleportCount==36:  # Adjust timing as needed
+                    if not self.gothit:
+                        self.x= other.x +10 if self.facing==-1 else other.x+40
+                    else:
+                        self.x=1000 if st.screen_width//2- other.x>0 else 100
+                        self.gothit=False
+            else:
+                self.y=616
+                self.gothit=False
 
-        if self.action == "walk":
-            self.hitbox = pygame.Rect(self.x-60, self.y, 45, 30)
-        elif self.action in ["idle", "sec_idle", "third_idle", "final_idle", "hold_after_cero", "cero", "attack", "jump_attack", "combo_attack", "teleport", "hit"]:
-            self.hitbox = pygame.Rect(self.x-50, self.y, 25, 52)
+            if self.action == "walk":
+                self.hitbox = pygame.Rect(self.x-60, self.y, 45, 30)
+            elif self.action in ["idle", "sec_idle", "third_idle", "final_idle", "hold_after_cero", "cero", "attack", "jump_attack", "combo_attack", "teleport", "hit"]:
+                self.hitbox = pygame.Rect(self.x-50, self.y, 25, 52)
+            else:
+                if self.action not in [
+                    "idle", "sec_idle", "third_idle", "final_idle",
+                    "attack", "jump_attack", "combo_attack",
+                    "cero", "teleport", "dash", "hit"
+                ]:
+                    self.action = "idle"
+                    self.idleCount = 0
         else:
-            if self.action not in [
-                "idle", "sec_idle", "third_idle", "final_idle",
-                "attack", "jump_attack", "combo_attack",
-                "cero", "teleport", "dash", "hit"
-            ]:
-                self.action = "idle"
-                self.idleCount = 0
+            self.action="idle"
+            self.y=616
         self.draw(st.win,other)
 
     def cero(self):
@@ -319,7 +317,6 @@ class Aizen:
                 self.interrupt()
                 self.action = "cero"
                 st.lastCero = pygame.time.get_ticks()
-                self.can_escape_teleport=True
                 self.cero_queued=False
                 self.cero_started=True
 
@@ -341,13 +338,6 @@ class Aizen:
         self.health = max(0, self.health)
         self.health_bar.update(self.health)
         self.gothit=True
-        self.gothitCount+=1
-        if self.gothitCount >= 15:
-        # threshold reached: allow an escape teleport, then reset stacks
-            self.can_escape_teleport = True
-            self.gothitCount = 0
-        else:
-            self.can_escape_teleport = False
         if self.action not in ["cero","teleport"]:
             self.action = "hit"
             self.interrupt()

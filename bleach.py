@@ -14,7 +14,7 @@ clock = pygame.time.Clock()
 player = pl.Player(64, 64, 10, st.feet_y_initial)
 aizen= aizen.Aizen(900, st.feet_y_initial)
 shine_x=-100
-DEBUG = False
+DEBUG = True
 
 def hudPannel():
     st.win.blit(st.hud_pannel, (-20,-60))
@@ -217,7 +217,7 @@ def reset():
 
     # Reset projectiles
     pj.projectiles.clear()
-
+    player.ultimateGauge=0
     # Reset stats
     st.score = 0
     st.killCount = 0
@@ -342,7 +342,7 @@ def main():
                             elif player.mode=="bankai":
                                 player.activateDeactivateBankai()
                         elif event.key== pygame.K_i:
-                            if player.mode=="bankai":
+                            if player.mode=="bankai" and player.ultimateGauge>=150:
                                 player.ultimateGauge-=150
                                 player.visoredAttack()
                     if event.key== pygame.K_ESCAPE:
@@ -443,7 +443,7 @@ def main():
                     if lv.boss and aizen.status=="alive":
                         if player.attackhitbox.colliderect(aizen.hitbox) and player.action in ["attacking", "combo"]:
                             if player.attackCount>=9 and player.attackCount<=12:
-                                aizen.hit(2 * player.incrementalFactor)
+                                aizen.hit(1 * player.incrementalFactor)
                                 player.ultimateGauge+=5
                                 if aizen.health <= 0:
                                     aizen.status = "dead"
@@ -493,6 +493,7 @@ def main():
         elif st.game_state == "victory":
             if st.ending_sequence is None:
                 st.ending_sequence = ending.EndingSequence("victory")
+            player.feet_y=st.feet_y_initial
             st.ending_sequence.update(player)
             st.ending_sequence.draw(st.win)
             pygame.display.update()
