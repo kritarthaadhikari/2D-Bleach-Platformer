@@ -75,8 +75,6 @@ def draw_bar(x, y, width, height,
         st.win.blit(shine_surface, (x, y))
 
 def redrawwindow():
-    if lv.boss:
-        print(lv.scroll)
     st.win.blit(st.bg, (0, 0))
     if not st.scroll:
         st.win.blit(st.ground,(0,st.feet_y_initial+10))
@@ -97,6 +95,8 @@ def redrawwindow():
     player.draw(st.win, lv.scroll if lv.levelComplete and st.scroll else 0)
     text= st.font.render(f"Score: {st.score}",1,(255,255,255))
     st.win.blit(text,(st.screen_width-text.get_width()-20, 0))
+    text= st.font.render(f"Stage- {lv.i}",1,(255,165,0))
+    st.win.blit(text, (st.screen_width//2-text.get_width()+80,100))
     for p in pj.cero[:]:
         p.move(aizen_boss)
         p.draw(st.win,aizen_boss)
@@ -226,7 +226,7 @@ def reset():
     st.getsugatenshoSound.stop()
     st.bankaiSound.stop()
 
-    lv.i = 4
+    lv.i = 1
     lv.scroll = 0
     lv.levelComplete = False
     lv.hollow, lv.delay, lv.boss = lv.increment()
@@ -495,6 +495,7 @@ def main():
                 redrawwindow()
         elif st.game_state == "victory":
             if st.ending_sequence is None:
+                time.sleep(1)
                 st.ending_sequence = ending.EndingSequence("victory")
             player.feet_y=st.feet_y_initial
             st.ending_sequence.update(player)
@@ -507,6 +508,7 @@ def main():
 
         elif st.game_state == "defeat":
             if st.ending_sequence is None:
+                time.sleep(1)
                 st.ending_sequence = ending.EndingSequence("defeat")
             st.ending_sequence.update(player)
             st.ending_sequence.draw(st.win)

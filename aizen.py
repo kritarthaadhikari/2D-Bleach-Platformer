@@ -43,8 +43,8 @@ class Aizen:
         self.y = y
         self.hitbox = pygame.Rect(self.x+10, self.y-4, 10, st.AizenTitle.get_height()+20)
         self.hitbox_x=self.x+10
-        self.max_health = 20
-        self.health = 20
+        self.max_health = 1000
+        self.health = 1000
         self.dx = 0
         self.vel = 6
         self.walkCount = 0

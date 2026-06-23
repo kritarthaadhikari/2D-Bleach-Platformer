@@ -2,7 +2,7 @@ import pygame as py
 import enemy as en
 import setup as st
 global i 
-i=4
+i=1
 hollows=[]
 levels= {
     1: {"hollows":1, "spawn_delay":1, "boss":False},

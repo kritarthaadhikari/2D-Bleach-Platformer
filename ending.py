@@ -13,7 +13,14 @@ class EndingSequence:
         self.fade_surface = pygame.Surface((st.screen_width, st.screen_height))
         self.fade_surface.fill((0, 0, 0))
 
-        self.dialogue_text = "I'll protect everyone..."
+        self.dialogue_lines = ["Take heed, Struggler. ",
+        "Struggle, contend, writh...",
+        "that is the only sword",
+        "of those who resort",
+        "to the non-believer...",
+        "It is a path you carve",
+        "with your own two hands!..."]
+        self.dialogue_text= "\n".join(self.dialogue_lines)
         self.dialogue_char_index = 0
         self.dialogue_char_timer = 0
 

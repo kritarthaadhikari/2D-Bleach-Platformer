@@ -30,7 +30,7 @@ class Player:
         self.signatureCount = 0
         self.steadyCount=0 #steadyhit
         self.staminaGauge = 100
-        self.ultimateGauge = 160
+        self.ultimateGauge = 0
         self.comboTimer=0 #Time allowed for followup attack window
         self.combo_state= "none" 
         self.mode= "shikai" #shikai or bankai mode
