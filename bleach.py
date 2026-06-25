@@ -312,10 +312,21 @@ def main():
                                         player.dashCount = 0
                                         player.dashTimer = 10
                                         player.x += player.facing * 60 * player.incrementalFactor
+                                        if not -player.vel <screen_x< st.screen_width- player.width - player.vel:
+                                            if screen_x>st.screen_width- player.width - player.vel:
+                                                player.x= st.screen_height-player.width-player.vel
+                                            elif screen_x<-player.vel:
+                                                player.x=player.vel
+
                                         player.staminaGauge -= 20
                                     else:
                                         player.interrupt()
                                         player.x += player.facing * 60 * player.incrementalFactor
+                                        if not -player.vel <screen_x< st.screen_width- player.width - player.vel:
+                                            if screen_x>st.screen_width- player.width - player.vel:
+                                                player.x= st.screen_height-player.width-player.vel
+                                            elif screen_x<-player.vel:
+                                                player.x=player.vel
                                         player.action = "dashing"
                                         player.dashCount = 0
                                         player.staminaGauge -= 20
@@ -393,22 +404,24 @@ def main():
                                     player.walkCount = 0
 
                             # Jump logic
-                            if not player.jump:
-                                if keys[pygame.K_w] :
-                                    player.jump=True
-                                    player.interrupt()
-                            else:
-                                if player.jumpCount >= -11:
-                                    neg = 1
-                                    if player.jumpCount < 0: neg = -1
-                                    player.feet_y -= (player.jumpCount ** 2) * 0.5 * neg
-                                    player.x+=player.facing*2
-                                    player.jumpCount -= 1
-                                else: 
-                                    player.jumpCount = 11
-                                    player.jump=False
-                                    player.feet_y=st.feet_y_initial
-                                    player.air_dash = False
+                            if player.transform_state!="activating":
+                                if not player.jump:
+                                    if keys[pygame.K_w]:
+                                        player.jump=True
+                                        player.interrupt()
+                                else:
+                                    if player.jumpCount >= -9:
+                                        neg = 1
+                                        if player.jumpCount < 0: neg = -1
+                                        player.feet_y -= (player.jumpCount ** 2) * 0.5 * neg
+                                        player.x+=player.facing*2
+                                        player.jumpCount -= 1
+                                    else: 
+                                        player.jumpCount = 9
+                                        player.jump=False
+                                        player.feet_y=st.feet_y_initial
+                                        player.air_dash = False
+                                
                     # Collisions
                     for p in pj.projectiles[:]:
                         if player.signatureCount>=21:
@@ -460,7 +473,7 @@ def main():
                         if player.hitbox.colliderect(h.body_hitbox):
                             if h not in player.hollowattack:
                                 player.hollowattack.append(h)
-                            if h.state in ["idle"] :
+                            if h.state in ["idle"] and not player.jump:
                                 h.state="attacking"
                             if player.hitbox.colliderect(h.attack_hitbox):
                                 if 21 <=h.attackCount <24 or h.state=="hit":
@@ -480,7 +493,7 @@ def main():
                                 player.hit_state= "normal"
                 elif player.action in ["visored"]:
                     player.jump=False
-                    player.jumpCount=11
+                    player.jumpCount=9
                     if player.hitbox.colliderect(aizen_boss.hitbox):
                         if player.visoredCount>=20 and player.visoredCount<=35 and lv.boss and not lv.levelComplete:
                             aizen_boss.hit(20*player.incrementalFactor)

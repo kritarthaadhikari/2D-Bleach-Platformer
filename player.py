@@ -13,7 +13,8 @@ class Player:
         self.stanceCount = 0 #stance init
         self.stanceFinal = 0 #stance continuation
         self.stance_state = "initial" # stance animation phase
-        self.jumpCount = 11 #jump parameter
+        self.jumpCount = 9
+         #jump parameter
         self.spjumpCount = 0 #jump  count for animation
         self.facing = 1 #direction
         self.dashTimer = 10 #dash duration
@@ -30,7 +31,7 @@ class Player:
         self.signatureCount = 0
         self.steadyCount=0 #steadyhit
         self.staminaGauge = 100
-        self.ultimateGauge = 0
+        self.ultimateGauge =100
         self.comboTimer=0 #Time allowed for followup attack window
         self.combo_state= "none" 
         self.mode= "shikai" #shikai or bankai mode
@@ -139,7 +140,6 @@ class Player:
         self.dashCount=0
         self.attackCount=0
         self.signatureCount=0
-        self.jumpCount=11
         self.spjumpCount=0
         self.stanceCount=0
         self.stanceFinal=0
@@ -171,6 +171,7 @@ class Player:
                 self.bankaiCount=0
                 self.transform_state="inactive"
                 self.action="idle"
+                
             self.bankaiCount+=1
         else:
             if self.action=="visored":
