@@ -22,7 +22,7 @@ def handleMenu():
 
         if event.type==pygame.MOUSEBUTTONDOWN:
             if play_rect.collidepoint(event.pos):
-                st.game_state="victory"
+                st.game_state="start"
             elif instruct_rect.collidepoint(event.pos):
                 st.game_state="instructions"
             elif quit_rect.collidepoint(event.pos):

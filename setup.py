@@ -41,7 +41,7 @@ pygame.mixer.music.load('audio/on the precipice of death.mp3')
 pygame.mixer.music.play(-1)
 
 score=0
-killCount=1
+killCount=0
 killCountperRound=0
 pause= False
 scroll=False
@@ -62,7 +62,7 @@ lastCero= pygame.time.get_ticks()
 
 #Bankai Display Parameters
 text_duration_bankai= 2000 #2s
-text_start_time_bankai= 0
+text_start_time_bankai=0
 current_time_bankai=0
 
 # --- PROJECTILE ASSETS ---

@@ -120,7 +120,7 @@ class Enemy:
             else:
                 sprite= st.fallLeft[3]
             self.kill(other)
-        
+        pygame.draw.rect(win,(255,0,0),self.body_hitbox,1)
         if sprite:
             sprite_height= sprite.get_height()
             draw_y= self.feet- sprite_height+50
@@ -128,6 +128,7 @@ class Enemy:
     
     def move(self, win,other):
         if not self.blown:
+        
             if self.state=="idle" and self.health>0:
                 # Only adjust direction based on distance when NOT colliding
                 # Handle collision by flipping direction
@@ -158,7 +159,7 @@ class Enemy:
                 self.hitCount=0
         else:
             self.state="idle"
-        self.health-=20*other.incrementalFactor
+        self.health-=10*other.incrementalFactor
         if other.ultimateGauge<160:
             other.ultimateGauge+=1/2
             other.ultimateGauge=min(other.ultimateGauge, 160)

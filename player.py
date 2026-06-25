@@ -371,6 +371,7 @@ class Player:
                     else:
                         sprite= self.animations[self.mode]["attackLeft"][self.attackCount// framesPerImg]
                     self.attackhitbox=pygame.Rect(self.x+self.facing*40,self.feet_y,55,30)
+                    pygame.draw.rect(win, (0,255,0),self.attackhitbox,2)
                     if self.attackCount+1 >= limit:
                         self.attackCount=0
                         self.action="idle"
@@ -391,6 +392,7 @@ class Player:
                         sprite= self.animations[self.mode]["attackFollowUpLeft"][self.attackCount//framesPerImg]
                     
                     self.attackhitbox=pygame.Rect(self.x+self.facing*30,self.feet_y,45,30)
+                    pygame.draw.rect(win, (0,255,0),self.attackhitbox,2)
                     if self.attackCount+1 >=limit:
                         self.attackCount=0
                         self.comboTimer=0
@@ -410,6 +412,8 @@ class Player:
                     self.walkCount = 0
 
         self.hitbox= pygame.Rect(self.x+10, self.feet_y-4,35, 52 )
+        if self.action not in ["attacking","combo"]:
+            self.attackhitbox=None
         draw_x = self.x
         if not self.mode == "bankai" or (((self.animations['bankai']['stanceRight'][0] and self.facing == 1) and (self.action not in ["attacking", "combo"]))
                                            or ((self.mode == "bankai" and (self.action in ["attacking", "combo"]) and self.facing == -1))):

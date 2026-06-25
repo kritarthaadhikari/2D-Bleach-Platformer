@@ -107,14 +107,14 @@ def redrawwindow():
     st.current_time= pygame.time.get_ticks()
     if st.show_text:
         if st.killCount==0 and st.current_time-st.text_start_time<= st.text_duration:
-            text= st.font.render("Locked! Get a kill",1,(255,255,255))
+            text= st.font.render("Locked! Get a kill",1,(255,165,0))
             st.win.blit(text,(st.screen_width//2-text.get_width()//2, st.screen_height//2-text.get_height()//2))
         else:
             st.show_text= False
     st.current_time_bankai= pygame.time.get_ticks()
     if st.current_time_bankai-st.text_start_time_bankai<=st.text_duration_bankai:
         if player.ultimateGauge>=80:
-            text= st.font.render("Ultimate Ready!",1,(255,255,255))
+            text= st.font.render("Bankai Ready!",1,(255,165,0))
             st.win.blit(text,(st.screen_width//2-text.get_width()//2, st.screen_height//2-text.get_height()//2))
     if st.Mpause:
         st.win.blit(st.mute,(st.screen_width-100,70))
@@ -239,11 +239,11 @@ def enemyDamaged(enemy):
     if player.action=="visored":
         enemy.gothit(player)
         return
-    if player.attackCount==0:
+    elif 12> player.attackCount>=9:
         enemy.state="attacking"
         enemy.gothit(player)
         if player.action=="combo":
-            enemy.health-=40*player.incrementalFactor
+            enemy.health-=20*player.incrementalFactor
 
 def hit(player):
     player.health-=100
@@ -465,10 +465,14 @@ def main():
                             if player.hitbox.colliderect(h.attack_hitbox):
                                 if 21 <=h.attackCount <24 or h.state=="hit":
                                     player.hit()
-                                if player.attackCount>=9 and player.attackCount<=12 and (player.action in ["attacking", "combo"]):
+                            if player.attackhitbox!=None and player.attackhitbox.colliderect(h.body_hitbox):
+                                if player.attackCount>=9 and player.attackCount<12 and (player.action in ["attacking", "combo"]):
                                     enemyDamaged(h)
                             if(player.action in ["attacking", "combo"]):
                                 enemyDamaged(h)
+                        elif player.attackhitbox!=None and player.attackhitbox.colliderect(h.body_hitbox):
+                            if player.attackCount>=9 and player.attackCount<=12 and player.action in ["attacking", "combo"]:
+                                    enemyDamaged(h)
                         else:
                             if h in player.hollowattack:
                                 if h.state not in ["falling", "dead"]:
