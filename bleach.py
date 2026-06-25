@@ -243,7 +243,7 @@ def enemyDamaged(enemy):
         enemy.state="attacking"
         enemy.gothit(player)
         if player.action=="combo":
-            enemy.health-=20*player.incrementalFactor
+            enemy.health-=10*player.incrementalFactor
 
 def hit(player):
     player.health-=100
@@ -311,11 +311,11 @@ def main():
                                         player.air_dash = True
                                         player.dashCount = 0
                                         player.dashTimer = 10
-                                        player.x += player.facing * 40 * player.incrementalFactor
+                                        player.x += player.facing * 60 * player.incrementalFactor
                                         player.staminaGauge -= 20
                                     else:
                                         player.interrupt()
-                                        player.x += player.facing * 40 * player.incrementalFactor
+                                        player.x += player.facing * 60 * player.incrementalFactor
                                         player.action = "dashing"
                                         player.dashCount = 0
                                         player.staminaGauge -= 20

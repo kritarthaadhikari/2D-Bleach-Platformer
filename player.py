@@ -43,7 +43,7 @@ class Player:
         self.movement_state = "idle" #left, right, or idle
         self.hollowattack=[] 
         self.ceroHit=False
-        self.damage=200
+        self.damage=150
         self.jump=False
         self.fixed_x=self.x
         self.visoredCount=0
@@ -116,7 +116,7 @@ class Player:
         if self.mode=="shikai":
             self.mode= "bankai"
             self.vel=7
-            self.damage=500
+            self.damage=300
             self.incrementalFactor=2
             self.transform_state="activating"
             self.ultimateGauge-=80
@@ -131,7 +131,7 @@ class Player:
         elif self.mode=="bankai":
             self.mode= "shikai"
             self.vel=5
-            self.damage=200
+            self.damage=150
             self.stanceCount=0
             self.stanceFinal=0
             self.incrementalFactor=1

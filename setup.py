@@ -51,7 +51,7 @@ arrow= pygame.transform.flip(pygame.transform.smoothscale(pygame.image.load('ima
 ending_sequence = None
 
 #Signature Display Parameters
-text_duration= 1000 #1s
+text_duration= 3000 #1s
 text_start_time= 0
 current_time=0
 show_text= False

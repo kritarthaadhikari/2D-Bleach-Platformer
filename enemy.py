@@ -159,7 +159,7 @@ class Enemy:
                 self.hitCount=0
         else:
             self.state="idle"
-        self.health-=10*other.incrementalFactor
+        self.health-=5*other.incrementalFactor
         if other.ultimateGauge<160:
             other.ultimateGauge+=1/2
             other.ultimateGauge=min(other.ultimateGauge, 160)
