@@ -62,12 +62,6 @@ show_text= False
 lastTeleport= pygame.time.get_ticks()
 lastCero= pygame.time.get_ticks()
 
-#Bankai Display Parameters
-text_duration_bankai= 2000 #2s
-text_start_time_bankai=0
-current_time_bankai=0
-show_text_bankai= False
-
 # --- PROJECTILE ASSETS ---
 slash = [pygame.image.load(f'images/shot/fire{i}.png') for i in range(1,5)]
 slashright = [pygame.transform.smoothscale(img, (64,64)) for img in slash]
@@ -259,3 +253,25 @@ EXISTING_KEYS={pygame.K_SPACE,
                pygame.K_w,
                pygame.K_b,
                }
+
+def bankaiUltimateReady(player,previousGauge):
+    global show_text_bankai,show_text_ultimate,text_start_time_ult,text_start_time_bankai
+    if player.mode=="shikai" and previousGauge<80 and player.ultimateGauge>=80:
+        show_text_bankai=True
+        text_start_time_bankai=pygame.time.get_ticks()
+    elif player.mode=="bankai" and previousGauge<150 and player.ultimateGauge>=150:
+        show_text_ultimate=True
+        text_start_time_ult=pygame.time.get_ticks()
+
+#Bankai Display Parameters
+text_duration_bankai= 2000 #2s
+text_start_time_bankai=0
+current_time_bankai=0
+show_text_bankai= False
+
+previousGauge= 0
+#Ultimate Display Parameters
+text_duration_ult=2000
+text_start_time_ult=0
+current_time_ult=0
+show_text_ultimate=False

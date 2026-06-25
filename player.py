@@ -31,7 +31,7 @@ class Player:
         self.signatureCount = 0
         self.steadyCount=0 #steadyhit
         self.staminaGauge = 100
-        self.ultimateGauge =250
+        self.ultimateGauge =0
         self.comboTimer=0 #Time allowed for followup attack window
         self.combo_state= "none" 
         self.mode= "shikai" #shikai or bankai mode
@@ -172,8 +172,8 @@ class Player:
                 self.bankaiCount=0
                 self.transform_state="inactive"
                 self.action="idle"
-                
-            self.bankaiCount+=1
+            else:   
+                self.bankaiCount+=1
         else:
             if self.action=="visored":
                 framesPerImg=4

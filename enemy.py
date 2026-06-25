@@ -161,7 +161,9 @@ class Enemy:
             self.health-=20*other.incrementalFactor
         self.health-=5*other.incrementalFactor
         if other.ultimateGauge<160:
+            st.previousGauge=other.ultimateGauge
             other.ultimateGauge+=1/2
+            st.bankaiUltimateReady(other,st.previousGauge)
             other.ultimateGauge=min(other.ultimateGauge, 160)
     
     def kill(self,other):
@@ -172,7 +174,9 @@ class Enemy:
             st.killCount+=1
             st.killCountperRound+=1
             if other.ultimateGauge<160:
+                st.previousGauge=other.ultimateGauge
                 other.ultimateGauge+=40
+                st.bankaiUltimateReady(other,st.previousGauge)
                 other.ultimateGauge=min(other.ultimateGauge, 160)
 
 #Issue: Enemy movement and not attacking when player is in range

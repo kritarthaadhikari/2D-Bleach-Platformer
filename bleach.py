@@ -105,20 +105,27 @@ def redrawwindow():
             p.move(player)
             p.draw(st.win, lv.scroll if lv.levelComplete and st.scroll else 0, player)
     st.current_time= pygame.time.get_ticks()
+    st.current_time_bankai= pygame.time.get_ticks()
+    st.current_time_ult=pygame.time.get_ticks()
     if st.show_text:
         if st.killCount==0 and st.current_time-st.text_start_time<= st.text_duration:
-            text= st.font.render("Locked! Get a kill",1,(255,165,0))
+            text= st.font.render("Locked! Get a kill",1,(0,0,0))
             st.win.blit(text,(st.screen_width//2-text.get_width()//2, st.screen_height//2-text.get_height()//2))
         else:
             st.show_text= False
-    st.current_time_bankai= pygame.time.get_ticks()
-    if st.show_text_bankai:
+    elif st.show_text_bankai:
         if st.current_time_bankai-st.text_start_time_bankai<=st.text_duration_bankai:
-            if player.ultimateGauge>=80:
-                text= st.font.render("Bankai Ready!",1,(255,165,0))
-                st.text_start_time_bankai=pygame.time.get_ticks()
-                st.show_text_bankai=False
-                st.win.blit(text,(st.screen_width//2-text.get_width()//2, st.screen_height//2-text.get_height()//2))
+            text= st.font.render("Bankai Ready!",1,(0,0,0))
+            st.win.blit(text,(st.screen_width//2-text.get_width()//2, st.screen_height//2-text.get_height()//2))
+        else:
+            st.show_text_bankai=False
+    elif st.show_text_ultimate:
+        if st.current_time_ult-st.text_start_time_ult<=st.text_duration_ult:
+            text=st.font.render("Ultimate Ready",1,(0,0,0))
+            st.win.blit(text,(st.screen_width//2-text.get_width()//2, st.screen_height//2-text.get_height()//2))
+        else:
+            st.show_text_ultimate=False
+            
     if st.Mpause:
         st.win.blit(st.mute,(st.screen_width-100,70))
      # HP BAR
@@ -149,19 +156,6 @@ def redrawwindow():
         (200,100,255),
         animated=True
     )
-    if DEBUG:
-        fps_surf = st.font.render(f"FPS: {int(clock.get_fps())}", True, (255,255,0))
-        st.win.blit(fps_surf, (10, 10))
-        try:
-            pygame.draw.rect(st.win, (255,0,0), player.hitbox, 1)
-            pygame.draw.rect(st.win, (255,0,0), player.attackhitbox, 1)
-            for h in en.hollows:
-                pygame.draw.rect(st.win, (0,255,0), h.body_hitbox, 1)
-                pygame.draw.rect(st.win, (255,255,0), h.attack_hitbox, 1)
-        except Exception:
-            pass
-        info = f"x:{int(player.x)} action:{player.action} walk:{getattr(player,'walkCount',0)}"
-        st.win.blit(st.font.render(info, True, (255,255,255)), (10, 30))
     if lv.boss and not st.scroll and not lv.levelComplete:
         aizen_boss.move(player)
     pygame.display.update()   
@@ -239,9 +233,6 @@ def reset():
 
     last_enemy_spawn = time.time()
     st.pause = False
-
-def bankaiUltimateReady():
-    pass
 
 def enemyDamaged(enemy):
     if player.action=="visored":
@@ -365,7 +356,7 @@ def main():
                                 player.activateDeactivateBankai()
                             elif player.mode=="bankai":
                                 player.activateDeactivateBankai()
-                        elif event.key== pygame.K_i:
+                        elif event.key== pygame.K_i and not st.scroll:
                             if player.mode=="bankai" and player.ultimateGauge>=150:
                                 player.ultimateGauge-=150
                                 if not st.Mpause:
@@ -442,7 +433,9 @@ def main():
                                     if aizen_boss not in p.hitEnemies:
                                         aizen_boss.hit(player.damage//2)
                                         if player.ultimateGauge<160:
+                                            st.previousGauge=player.ultimateGauge
                                             player.ultimateGauge+=10
+                                            st.bankaiUltimateReady(player,st.previousGauge)
                                             player.ultimateGauge=min(player.ultimateGauge, 160)
                                         p.hitEnemies.append(aizen_boss) 
                                         if aizen_boss.health <= 0:
@@ -458,7 +451,9 @@ def main():
                                         if h.state in ["attacking","hit"]:
                                             h.state="idle"
                                         if player.ultimateGauge<160:
+                                            st.previousGauge=player.ultimateGauge
                                             player.ultimateGauge+=5
+                                            st.bankaiUltimateReady(player,st.previousGauge)
                                             player.ultimateGauge=min(player.ultimateGauge, 160)
                                         h.blown=True
                                         h.blownCount=0
@@ -472,7 +467,9 @@ def main():
                         if player.attackhitbox.colliderect(aizen_boss.hitbox) and player.action in ["attacking", "combo"]:
                             if player.attackCount>=9 and player.attackCount<=12:
                                 aizen_boss.hit(1 * player.incrementalFactor)
+                                st.previousGauge=player.ultimateGauge
                                 player.ultimateGauge+=5
+                                st.bankaiUltimateReady(player,st.previousGauge)
                                 if aizen_boss.health <= 0:
                                     aizen_boss.status = "dead"
                                     aizen_boss.action = "hit"
@@ -509,7 +506,9 @@ def main():
                     if player.hitbox.colliderect(aizen_boss.hitbox):
                         if player.visoredCount>=20 and player.visoredCount<=35 and lv.boss and not lv.levelComplete:
                             aizen_boss.hit(20*player.incrementalFactor)
+                            st.previousGauge=player.ultimateGauge
                             player.ultimateGauge+=5
+                            st.bankaiUltimateReady(player,st.previousGauge)
                             aizen_boss.action="hit"
                             if aizen_boss.health<=0:
                                 aizen_boss.status="dead"
