@@ -13,8 +13,8 @@ class Player:
         self.stanceCount = 0 #stance init
         self.stanceFinal = 0 #stance continuation
         self.stance_state = "initial" # stance animation phase
-        self.jumpCount = 9
-         #jump parameter
+        self.jumpCount = 9 #jump parameter
+        self.count=0
         self.spjumpCount = 0 #jump  count for animation
         self.facing = 1 #direction
         self.dashTimer = 10 #dash duration
@@ -31,7 +31,7 @@ class Player:
         self.signatureCount = 0
         self.steadyCount=0 #steadyhit
         self.staminaGauge = 100
-        self.ultimateGauge =100
+        self.ultimateGauge =250
         self.comboTimer=0 #Time allowed for followup attack window
         self.combo_state= "none" 
         self.mode= "shikai" #shikai or bankai mode
@@ -121,7 +121,8 @@ class Player:
             self.incrementalFactor=2
             self.transform_state="activating"
             self.ultimateGauge-=80
-            st.bankaiSound.play(0)
+            if not st.Mpause:
+                st.bankaiSound.play(0)
         # elif self.mode=="bankai":
         #     self.mode= "visored"
         #     self.vel=11
@@ -159,10 +160,10 @@ class Player:
                 sprite= self.animations[self.mode]["transformLeft"][self.bankaiCount//framesPerImg]
             if self.mode=="bankai":
                 if 16<=self.bankaiCount<=24:
-                    st.win.blit(st.bankai, (self.x-self.facing*(70+scroll), self.feet_y- st.bankai.get_height()+50))
+                    st.win.blit(st.bankai, (self.x-(70+scroll), self.feet_y- st.bankai.get_height()+50))
                 if 24<=self.bankaiCount<=32:
-                    st.win.blit(st.tl,(self.x-self.facing*(50 + scroll), self.feet_y- st.tl.get_height()+40))
-                    st.win.blit(st.tr,(self.x+self.facing*(50 - scroll), self.feet_y-st.tr.get_height()+40))
+                    st.win.blit(st.tl,(self.x-(50 + scroll), self.feet_y- st.tl.get_height()+40))
+                    st.win.blit(st.tr,(self.x+(50 - scroll), self.feet_y-st.tr.get_height()+40))
                     # st.win.blit(st.br,(self.x+self.facing*70,self.feet_y+st.br.get_height()-60))
                     # st.win.blit(st.bl,(self.x-self.facing*70,self.feet_y+st.bl.get_height()-60))
                     # st.win.blit(st.br2, (self.x+self.facing*70,self.feet_y+st.br2.get_height()))
@@ -176,6 +177,7 @@ class Player:
         else:
             if self.action=="visored":
                 framesPerImg=4
+                framesPerImgEffect=18
                 limit=len(st.VisoredRight)*framesPerImg
                 if self.facing==1:
                     sprite= st.VisoredRight[self.visoredCount//framesPerImg]
@@ -195,6 +197,8 @@ class Player:
                 else:
                     self.feet_y=st.feet_y_initial
                 self.hitbox= pygame.Rect(self.x+10, self.feet_y-4,60, 52 )
+                effectSprite= st.VisoredEffectsExtra[self.visoredCount//framesPerImgEffect]
+                win.blit(effectSprite,(self.fixed_x,st.feet_y_initial))
                 if self.visoredCount+1>=limit:
                     self.visoredCount=0
                     self.action="idle"
@@ -372,7 +376,6 @@ class Player:
                     else:
                         sprite= self.animations[self.mode]["attackLeft"][self.attackCount// framesPerImg]
                     self.attackhitbox=pygame.Rect(self.x+self.facing*40,self.feet_y,55,30)
-                    pygame.draw.rect(win, (0,255,0),self.attackhitbox,2)
                     if self.attackCount+1 >= limit:
                         self.attackCount=0
                         self.action="idle"
@@ -393,7 +396,7 @@ class Player:
                         sprite= self.animations[self.mode]["attackFollowUpLeft"][self.attackCount//framesPerImg]
                     
                     self.attackhitbox=pygame.Rect(self.x+self.facing*30,self.feet_y,45,30)
-                    pygame.draw.rect(win, (0,255,0),self.attackhitbox,2)
+
                     if self.attackCount+1 >=limit:
                         self.attackCount=0
                         self.comboTimer=0

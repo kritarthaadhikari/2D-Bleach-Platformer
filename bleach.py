@@ -112,10 +112,13 @@ def redrawwindow():
         else:
             st.show_text= False
     st.current_time_bankai= pygame.time.get_ticks()
-    if st.current_time_bankai-st.text_start_time_bankai<=st.text_duration_bankai:
-        if player.ultimateGauge>=80:
-            text= st.font.render("Bankai Ready!",1,(255,165,0))
-            st.win.blit(text,(st.screen_width//2-text.get_width()//2, st.screen_height//2-text.get_height()//2))
+    if st.show_text_bankai:
+        if st.current_time_bankai-st.text_start_time_bankai<=st.text_duration_bankai:
+            if player.ultimateGauge>=80:
+                text= st.font.render("Bankai Ready!",1,(255,165,0))
+                st.text_start_time_bankai=pygame.time.get_ticks()
+                st.show_text_bankai=False
+                st.win.blit(text,(st.screen_width//2-text.get_width()//2, st.screen_height//2-text.get_height()//2))
     if st.Mpause:
         st.win.blit(st.mute,(st.screen_width-100,70))
      # HP BAR
@@ -171,7 +174,8 @@ def createEnemies():
         if len(lv.hollows)==0:
             enemy = en.Enemy(110, 149, 1200, st.feet_y_initial)
             enemy.static_x=1200
-            st.hollowSound.play(0)
+            if not st.Mpause:
+                st.hollowSound.play(0)
             en.hollows.append(enemy)
             lv.hollows.append(enemy)
         if lv.i<=5:
@@ -179,7 +183,8 @@ def createEnemies():
                 enemy = en.Enemy(110, 149, random.randint(0,1)*st.screen_width+random.choice([-1,1]*100), st.feet_y_initial)
                 enemy.facing=-1 if enemy.x==st.screen_width else 1
                 enemy.static_x=enemy.x
-                st.hollowSound.play(0)
+                if not st.Mpause:
+                    st.hollowSound.play(0)
                 lv.hollows.append(enemy)
                 en.hollows.append(enemy)
                 last_enemy_spawn = time.time()
@@ -235,6 +240,9 @@ def reset():
     last_enemy_spawn = time.time()
     st.pause = False
 
+def bankaiUltimateReady():
+    pass
+
 def enemyDamaged(enemy):
     if player.action=="visored":
         enemy.gothit(player)
@@ -275,6 +283,7 @@ def main():
                             st.game_state="mainmenu"
                         else:
                             st.game_state="start"
+                
         if st.game_state=="start":
             createEnemies()
             if player.staminaGauge<100:
@@ -343,8 +352,9 @@ def main():
                                     new_slash= pj.Projectile(player.x, player.feet_y-10,64,64,player.facing)   
                                     new_slash.getsugatenshou=True
                                     pj.projectiles.append(new_slash)
-                                    st.getsugatenshoSound.play(0)
-                                    if player.action=="hit":
+                                    if not st.Mpause:
+                                        st.getsugatenshoSound.play(0)
+                                    if player.action=="hit" :
                                         st.getsugatenshoSound.stop()
                                 else:
                                     st.show_text= True
@@ -358,6 +368,8 @@ def main():
                         elif event.key== pygame.K_i:
                             if player.mode=="bankai" and player.ultimateGauge>=150:
                                 player.ultimateGauge-=150
+                                if not st.Mpause:
+                                    st.ichigoScream.play(0)
                                 player.visoredAttack()
                     if event.key== pygame.K_ESCAPE:
                         if st.pause:

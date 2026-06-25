@@ -22,6 +22,8 @@ bankaiSound.set_volume(0.5)
 
 getsugatenshoSound= pygame.mixer.Sound('audio/getsugatensho.wav')
 getsugatenshoSound.set_volume(0.5)
+ichigoScream= pygame.mixer.Sound('audio/ichigoscream.mp3')
+ichigoScream.set_volume(0.2)
 
 hollowSound= pygame.mixer.Sound('audio/hollowscream.mp3')
 hollowSound.set_volume(1)
@@ -64,6 +66,7 @@ lastCero= pygame.time.get_ticks()
 text_duration_bankai= 2000 #2s
 text_start_time_bankai=0
 current_time_bankai=0
+show_text_bankai= False
 
 # --- PROJECTILE ASSETS ---
 slash = [pygame.image.load(f'images/shot/fire{i}.png') for i in range(1,5)]
@@ -140,7 +143,7 @@ bankaiGetsugatenshoRight = [pygame.image.load(f'images/bankai/getsugatensho{i}.p
 bankaiGetsugatenshoLeft = [pygame.transform.flip(img, True, False) for img in bankaiGetsugatenshoRight]
 bankaiFollowUpRight=[pygame.image.load(f'images/bankai/fattack{i}.png') for i in range(1,7)]
 bankaiFollowUpLeft = [pygame.transform.flip(img, True, False) for img in bankaiFollowUpRight]
-bankaiTransformRight= [pygame.image.load(f'images/bankai/bankai{i}.png') for i in range(1,9)]
+bankaiTransformRight= [pygame.image.load(f'images/bankai/bankai{i}.png') for i in range(1,10)]
 bankaiTransformLeft = [pygame.transform.flip(img, True, False) for img in bankaiTransformRight]
 getsugatensho= pygame.image.load('images/bankai/getsuga.png')
 bankaihitbyAizenRight= [pygame.image.load(f'images/bankai/hit{i}.png') for i in range(1,4)]
@@ -155,7 +158,7 @@ VisoredUltimateLeft=[pygame.image.load(f'images/visored/ult{i}.png') for i in ra
 VisoredUltimateRight= [pygame.transform.flip(img, True, False) for img in VisoredUltimateLeft]
 VisoredRight= [pygame.image.load(f'images/visored/transform{i}.png') for i in range(1,4)]+VisoredUltimateRight+VisoredToBankaiRight
 VisoredLeft= [pygame.transform.flip(img, True, False) for img in VisoredRight]+VisoredUltimateLeft+VisoredToBankaiLeft
-
+VisoredEffectsExtra=[pygame.image.load(f'images/visored/extra{i}.png') for i in range(1,4)]
 #bankai visuals
 bankai= pygame.image.load('images/bankai/bankai.png')
 tr= pygame.image.load('images/bankai/TR1.png')

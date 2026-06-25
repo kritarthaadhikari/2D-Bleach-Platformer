@@ -20,6 +20,10 @@ def handleMenu():
             pygame.quit()
             quit()
 
+        if event.type==pygame.KEYDOWN:
+            if event.key==pygame.K_m:
+                st.Mpause=not st.Mpause
+                st.pause_music()
         if event.type==pygame.MOUSEBUTTONDOWN:
             if play_rect.collidepoint(event.pos):
                 st.game_state="start"

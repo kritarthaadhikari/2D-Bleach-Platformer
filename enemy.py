@@ -120,7 +120,6 @@ class Enemy:
             else:
                 sprite= st.fallLeft[3]
             self.kill(other)
-        pygame.draw.rect(win,(255,0,0),self.body_hitbox,1)
         if sprite:
             sprite_height= sprite.get_height()
             draw_y= self.feet- sprite_height+50
@@ -155,10 +154,11 @@ class Enemy:
     def gothit(self,other):
         if not other.action=="visored":
             if self.state=="idle":
-                self.state="hit"
-                self.hitCount=0
+                self.state="attacking"
+                self.attackCount=0
         else:
             self.state="idle"
+            self.health-=20*other.incrementalFactor
         self.health-=5*other.incrementalFactor
         if other.ultimateGauge<160:
             other.ultimateGauge+=1/2
