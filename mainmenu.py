@@ -32,7 +32,7 @@ def handleMenu():
                 st.game_state="instructions"
             elif quit_rect.collidepoint(event.pos):
                 pygame.quit()
-                quit()
+                sys.exit()
 
 def instructions():
     st.win.fill((20, 45, 72))
