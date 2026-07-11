@@ -1,0 +1,21 @@
+# Virtual environment
+venv/
+env/
+.venv/
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+
+# Build artifacts
+build/
+dist/
+*.egg-info/
+
+# OS junk
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
