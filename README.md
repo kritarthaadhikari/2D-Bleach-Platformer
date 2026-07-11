@@ -17,7 +17,9 @@ Fight your way through relentless Hollow encounters, unleash Ichigo's iconic abi
 -  Story ending sequence
 -  Background music and sound effects
 
-<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/f72ac404-e8dc-486e-bd51-c1680f68de5e" />
+# **Preview**
+<img width="1244.44" height="700" alt="image" src="https://github.com/user-attachments/assets/e6c3cdcc-e946-4c2d-a487-56b635681a9d" />
+
 
 # Technologies Used
 
